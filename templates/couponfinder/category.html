@@ -1,0 +1,73 @@
+{% extends 'couponfinder/base.html' %}
+{% block main %}
+
+  <style type="text/css">
+    /* Large Displays */
+    @media (min-width: 991px) {
+      .couponfinder-lg-heading, .couponfinder-lg-content {display:block;}
+      .couponfinder-sm-md-heading, .couponfinder-sm-md-container {display:none;}
+    }
+
+    /* Medium Displays */
+    @media (min-width: 767px) and (max-width: 991px) {
+      .couponfinder-lg-heading, .couponfinder-lg-content {display:none;}
+      .couponfinder-sm-md-heading, .couponfinder-sm-md-container {display:block;}
+    }
+
+    /* Small Displays */
+    @media (max-width: 767px) {
+      .couponfinder-lg-heading, .couponfinder-lg-content {display:none;}
+      .couponfinder-sm-md-heading, .couponfinder-sm-md-container {display:block;}
+      .couponfinder-offer {
+        padding-left:0px;
+        padding-right:0px;
+      }
+    }
+  </style>
+
+  {% if category %}
+    <!-- Mobiles, and Tablets -->
+    <h1 class="h2 mt-5 mb-0 pt-4 pr-2 pb-0 pl-3 bg-light text-primary couponfinder-sm-md-heading">
+      {{category.name}}
+    </h1>
+  {% endif %}
+  <div class="container pt-2 mb-2 couponfinder-sm-md-container" id="couponfinder-sm-md-container">
+    {% include "couponfinder/offer-sm-md.html" %}
+  </div>
+
+  <div class="container mb-3 couponfinder-sm-md-container">
+    <div class="row">
+      <div class="col-4 mx-auto p-1 text-center">
+        {% if offers.has_next %}
+          <button class="text-light btn btn-info couponfinder-paginator" id="couponfinder-sm-md-paginator" data-couponfinder-currentpage="{{offers.number}}" data-couponfinder-nextpage="{{offers.next_page_number}}" data-couponfinder-totalpages="{{offers.paginator.num_pages}}" data-couponfinder-slug="{{category|lower}}">
+            Load more
+          </button>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Large Displays -->
+  <div class="container couponfinder-lg-content" id="couponfinder-lg-content">
+    {% if category %}
+      <div class="couponfinder-lg-heading">
+        <h1 class="h2 mt-5 mb-4 pl-2 text-primary">{{category.name}}</h1>
+      </div>
+    {% endif %}
+
+    {% include "couponfinder/offer-lg.html" %}
+  </div>
+
+  <div class="container couponfinder-lg-content">
+    <div class="row">
+      <div class="col-4 mx-auto p-1 text-center">
+        {% if offers.has_next %}
+          <button class="text-light btn btn-info couponfinder-paginator" id="couponfinder-lg-paginator" data-couponfinder-currentpage="{{offers.number}}" data-couponfinder-nextpage="{{offers.next_page_number}}" data-couponfinder-totalpages="{{offers.paginator.num_pages}}" data-couponfinder-slug="{{category|lower}}">
+            Load more
+          </button>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

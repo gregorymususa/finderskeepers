@@ -1,0 +1,42 @@
+<div class="row couponfinder-sm-md-content">
+  {% if offers %}
+  {% for offer in offers %}
+  <div class="col-sm-12 col-md-6 mt-3 mb-5 text-dark border border-top-dark couponfinder-offer couponfinder_dropshadow">
+
+    <div class="card border-0 bg-white text-dark">
+
+      <div class="card-body">
+        <div class="row">
+          <div class="col-3 px-0">
+            {% if '' != offer.organization.logo %}
+              <img alt="Organization Logo" class="w-100" src="{% url offer.organization.logo %}">
+            {% else %}
+              <img alt="Organization Logo" class="w-100" src="{% url 'couponfinder_org_365_Tickets' %}">
+            {% endif %}
+          </div>
+          <div class="col-9">
+            <div class="card-title font-weight-bold">{{ offer.description }} at {{ offer.organization.name }}</div>
+            <div class="card-text">
+              <a class="text-primary d-inline-block mb-2" href="{{offer.affiliate_link}}">Visit site & get promotion</a>
+              <a class="text-primary d-inline-block couponfinder-card-business-link" href="{% url 'business' offer.organization.slug %}">See all from {{ offer.organization.name }}</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-footer clearfix" style="background-color:#f7f6ea; font-size:0.9rem;">
+        <span class="float-left">
+          <i class="far fa-clock"></i>
+          {{offer.expiry_date.day}}-{{offer.expiry_date.month}}-{{offer.expiry_date.year}}
+        </span>
+        <span class="float-right">
+          <i class="fas fa-gavel"></i>
+          Ts and Cs
+        </span>
+      </div>
+    </div>
+
+  </div>
+  {% endfor %}
+  {% endif %}
+</div>

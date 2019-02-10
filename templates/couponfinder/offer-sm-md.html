@@ -1,0 +1,51 @@
+<div class="row couponfinder-sm-md-content px-2">
+  {% if offers %}
+  {% for offer in offers %}
+  <div class="col-sm-12 col-md-6 mt-3 mb-5 text-dark couponfinder-offer">
+
+    <div class="card border border-top-dark bg-white text-dark couponfinder_dropshadow">
+
+      <div class="card-body">
+        <div class="container px-0">
+          <div class="row">
+            <div class="col-12 px-0 text-center">
+              {% if '' != offer.organization.logo %}
+                <img alt="Organization Logo" class="w-50" style="max-width:12rem;" src="{% url offer.organization.logo %}">
+              {% else %}
+                <img alt="Organization Logo" class="w-50" style="max-width:12rem;" src="{% url 'couponfinder_org_365_Tickets' %}">
+              {% endif %}
+            </div>
+            <div class="col-12">
+              <div class="card-title text-center font-weight-bold">{{ offer.description }} at {{ offer.organization.name }}</div>
+              <div class="card-text text-center">
+                {% if "Offer Code" == offer.label %}
+                  <p class="bg-info text-white py-2"><strong>{{ offer.code }}</strong></p>
+                {% endif %}
+                <a class="text-primary d-inline-block w-100 mb-2" href="{{offer.affiliate_link}}">Visit site & get promotion</a>
+                <a class="text-primary d-inline-block w-100 couponfinder-card-business-link" href="{% url 'business' offer.organization.slug %}">See all from {{ offer.organization.name }}</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-footer clearfix" style="background-color:#f7f6ea; font-size:0.9rem;">
+        <span class="float-left">
+          <i class="far fa-clock"></i>
+          {% if offer.is_while_stocks_last %}
+            While stocks last
+          {% else %}
+            {{ offer.expiry_date|date:"d M Y" }}
+          {% endif %}
+        </span>
+        <span class="float-right">
+          <i class="fas fa-gavel"></i>
+          Ts and Cs
+        </span>
+      </div>
+    </div>
+
+  </div>
+  {% endfor %}
+  {% endif %}
+</div>

@@ -1,0 +1,45 @@
+<div class="card-columns couponfinder-lg-content">
+{% if offers %}
+{% for offer in offers %}
+  <div class="card w-100 mb-5 bg-light text-dark couponfinder-offer text-center couponfinder_dropshadow" style="background-image:url('http://yetanothersandbox.com/images/card-bg.png');">
+    {% if "Offer Code" != offer.label %}
+      <!--The card should not have an image-->
+    {% else %}
+      {% if '' != offer.organization.logo %}
+        <img alt="Organization Logo" class="card-img-top my-3 mx-auto p-1 bg-light couponfinder_dropshadow" style="width:5.5rem; height:auto;" src="{% url offer.organization.logo %}">
+      {% else %}
+        <img alt="Organization Logo" class="card-img-top my-3 mx-auto p-1 bg-light couponfinder_dropshadow" style="width:5.5rem; height:auto;" src="{% url 'couponfinder_org_365_Tickets' %}">
+      {% endif %}
+    {%endif%}
+    <div class="card-body bg-white border-top border-top-dark">
+      <div class="row">
+        <div class="col-12">
+          <div class="card-title font-weight-bold mb-4">{{ offer.description }} at {{ offer.organization.name }}</div>
+          <div class="card-text">
+            {% if "Offer Code" == offer.label %}
+              <p class="bg-info text-white py-1"><strong>{{ offer.code }}</strong></p>
+            {% endif %}
+            <a class="text-primary d-inline-block w-100 mb-2" href="{{offer.affiliate_link}}"><small>Visit site & get promotion</small></a>
+            <a class="text-primary d-inline-block w-100 couponfinder-card-business-link" href="{% url 'business' offer.organization.slug %}"><small>See all from {{ offer.organization.name }}</small></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer clearfix" style="background-color:#f7f6ea; font-size:0.75rem;">
+      <span class="float-left">
+        <i class="far fa-clock"></i>
+        {% if offer.is_while_stocks_last %}
+          While stocks last
+        {% else %}
+          {{ offer.expiry_date|date:"d M Y" }}
+        {% endif %}
+      </span>
+      <span class="float-right">
+        <i class="fas fa-gavel"></i>
+        Ts and Cs
+      </span>
+    </div>
+  </div>
+{% endfor %}
+{% endif %}
+</div>

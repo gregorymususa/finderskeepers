@@ -1,0 +1,69 @@
+{% extends 'couponfinder/base.html' %}
+{% block main %}
+  <style type="text/css">
+    /* Large Displays */
+    @media (min-width: 991px) {
+      .couponfinder-sm-md-content, .couponfinder-sm-md-heading {display:none;}
+      .couponfinder-lg-content, .couponfinder-lg-heading {display:block;}
+    }
+
+    /* Medium Displays */
+    @media (min-width: 767px) and (max-width: 991px) {
+      .couponfinder-sm-md-content, .couponfinder-sm-md-heading {display:block;}
+      .couponfinder-lg-content, .couponfinder-lg-heading {display:none;}
+    }
+
+    /* Small Displays */
+    @media (max-width: 767px) {
+      .couponfinder-sm-md-content, .couponfinder-sm-md-heading {display:block;}
+      .couponfinder-lg-content, .couponfinder-lg-heading {display:none;}
+      .couponfinder-offer {
+        padding-left:0px;
+        padding-right:0px;
+      }
+    }
+  </style>
+
+  <!-- Mobiles, and Tablets -->
+  <h1 class="h2 mt-5 mb-0 pt-4 pr-2 pb-0 pl-3 bg-light text-primary couponfinder-sm-md-heading">
+    Search Results
+  </h1>
+  <div class="container pt-2 mb-3 couponfinder-sm-md-content">
+    {% if organizations %}
+      <ul class="list-group list-group-flush">
+        {% for organization in organizations %}
+          <li class="list-group-item border-0 my-1 couponfinder-search-result-item">
+            {% if '' != organization.logo %}
+              <img src="{% url organization.logo %}" style="width:2rem" />
+            {% else %}
+              <img src="{% url 'couponfinder_org_365_Tickets' %}" style="width:2rem" />
+            {% endif %}
+            <a href="{% url 'business' organization.slug %}" class="text-dark font-weight-bold">{{organization.name}}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </div>
+
+  <!-- Large Displays -->
+  <div class="container couponfinder-lg-content">
+    <div class="couponfinder-lg-heading">
+      <h1 class="h2 mt-5 mb-4 pl-2 text-primary">Search Results</h1>
+    </div>
+    {% if organizations %}
+      <ul class="list-group list-group-flush">
+        {% for organization in organizations %}
+          <li class="list-group-item border-0 my-1 couponfinder-search-result-item">
+            {% if '' != organization.logo %}
+              <img src="{% url organization.logo %}" style="width:2rem" />
+            {% else %}
+              <img src="{% url 'couponfinder_org_365_Tickets' %}" style="width:2rem" />
+            {% endif %}
+            <a href="{% url 'business' organization.slug %}" class="text-dark font-weight-bold">{{organization.name}}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </div>
+
+{% endblock %}

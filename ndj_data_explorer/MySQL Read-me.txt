@@ -1,0 +1,49 @@
+#####################################
+# Connecting via MySQL Command Line #
+#####################################
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'username_databasename',
+        'USER': 'root',
+        'PASSWORD': '90l1f4S.v3rs19',
+        'HOST': 'localhost',
+        'PORT': '3306',
+    }
+}
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'username_databasename',
+        'USER': 'mysite',
+        'PASSWORD': '84Ace5S.v3rs19',
+        'HOST': 'localhost',
+        'PORT': '3306',
+    }
+}
+
+mysql --host=localhost --port=3306 --user=root -p
+
+##############################
+# Connecting via MySQL Shell #
+##############################
+X Protocol Port: 33060
+Windows Service Name: MySQL80
+
+\connect mysqlx://root@localhost:33060
+shell.connect('mysqlx://root@localhost:33060')
+
+NB. use \sql, \js, \py (to change execution modes)
+
+#####################
+# Is MySQL Running? #
+#####################
+Since you used the Windows installer, everything is set up for you to run MySQL 5.7 as a Windows service, which is a great option in most cases.
+Instead of running mysqld.exe from the command line,
+Win + R
+Run services.msc
+Right-click on MySQL57
+Start the service.
+
+

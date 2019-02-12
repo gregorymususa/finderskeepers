@@ -4,8 +4,24 @@ from django.http import JsonResponse
 from django.template import Template, context, loader
 from .models import Category, Organization, Offer
 from django.core.paginator import Paginator
+import os
 
 # Query Set Reference:      https://docs.djangoproject.com/en/2.1/ref/models/querysets/
+
+#####################
+# Utility Functions #
+#####################
+"""
+Dynamically returns an absolute path, to a file (absolute from the current user's home dir);
+when given the file's relative path.
+
+relative_path - [Char] Relative path to the file; from the folder that this script, is currently in. Example: "templates/couponfinder/css/styles.css"
+"""
+def get_file_path(relative_path):
+    curr_dir = os.path.dirname(__file__)
+    rel_path = relative_path 
+    file_path = os.path.join(curr_dir,rel_path)
+    return file_path
 
 def get_all_categories():
     return Category.objects.order_by('manual_rank')
@@ -18,6 +34,9 @@ def get_footer_categories():
 def get_addt_footer_categories():
     return Category.objects.order_by('manual_rank')[3:7]
 
+####################
+# Output Functions #
+####################
 
 def index(request):
     categories = get_all_categories()
@@ -184,7 +203,7 @@ def ajax_search(request):
 
 def logo(request):
     try:
-        with open('F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\img\white_logo_transparent2.png', 'rb') as fd:
+        with open(get_file_path("templates/couponfinder/img/white_logo_transparent2.png"), 'rb') as fd:
             return HttpResponse(fd.read(), content_type="image/png")
     except:
         return HttpResponse('No Image Found!')
@@ -192,7 +211,7 @@ def logo(request):
 
 def travel_icon(request):
     try:
-        with open('F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\category_icons\world.png', "rb") as f:
+        with open(get_file_path("templates/couponfinder/category_icons/world.png"), "rb") as f:
             return HttpResponse(f.read(), content_type="image/jpeg")
     except IOError:
         return HttpResponse('No Image Found!')
@@ -200,7 +219,7 @@ def travel_icon(request):
 
 def experiences_icon(request):
     try:
-        with open('F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\category_icons\hot-air-balloon.png', "rb") as f:
+        with open(get_file_path("templates/couponfinder/category_icons/hot-air-balloon.png"), "rb") as f:
             return HttpResponse(f.read(), content_type="image/jpeg")
     except IOError:
         return HttpResponse('No Image Found!')
@@ -216,18 +235,18 @@ def fashion_icon(request):
 
 def bootstrap_css(request):
     try:
-        with open('F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\css\\bootstrap.css', "rt") as f:
+        with open(get_file_path("templates/couponfinder/css/bootstrap.css"), "rt") as f:
             return HttpResponse(f.read(), content_type="text/css")
     except IOError:
-        return HttpResponse('No Image Found!')
+        return HttpResponse('bootstrap.css not found!')
 
 
 def couponfinder_css(request):
     try:
-        with open('F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\css\couponfinder.css', "rt") as f:
+        with open(get_file_path("templates/couponfinder/css/couponfinder.css"), "rt") as f:
             return HttpResponse(f.read(), content_type="text/css")
     except IOError:
-        return HttpResponse('No Image Found!')
+        return HttpResponse('couponfinder.css not found!')
 
 
 # Organization Logos #

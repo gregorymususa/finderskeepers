@@ -12,7 +12,7 @@ urlpatterns = [
     path('logo/', views.logo, name='logo'),
     path('travel-icon/', views.travel_icon, name='travel-icon'),
     path('experiences-icon/', views.experiences_icon, name='experiences-icon'),
-    path('fashion-icon/', views.fashion_icon, name='/fashion-icon'),
+    path('fashion-icon/', views.fashion_icon, name='fashion-icon'),
     path('bootstrap-css/', views.bootstrap_css, name="bootstrap-css"),
     path('couponfinder-css/', views.couponfinder_css, name="couponfinder-css"),
     path('couponfinder_org_365_Tickets/', views.couponfinder_org_365_Tickets,

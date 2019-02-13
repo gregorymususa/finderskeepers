@@ -23,6 +23,7 @@ def get_file_path(relative_path):
     file_path = os.path.join(curr_dir,rel_path)
     return file_path
 
+
 def get_all_categories():
     return Category.objects.order_by('manual_rank')
 
@@ -227,7 +228,7 @@ def experiences_icon(request):
 
 def fashion_icon(request):
     try:
-        with open('F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\category_icons\\fashion.png', "rb") as f:
+        with open(get_file_path("templates/couponfinder/category_icons/fashion.png"), "rb") as f:
             return HttpResponse(f.read(), content_type="image/jpeg")
     except IOError:
         return HttpResponse('No Image Found!')

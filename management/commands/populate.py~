@@ -11,7 +11,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('method', nargs=1, choices=['crawler','provider'])
-        parser.add_argument('category', nargs=1, choices=['experiences','fashion','groceries','restaurants','sports','technology','travel'])
+        parser.add_argument('category', nargs=1, choices=['Experiences','Fashion','Groceries','Restaurants','Sports','Technology','Travel'])
 
     def handle(self, *args, **options):
         #handle the command

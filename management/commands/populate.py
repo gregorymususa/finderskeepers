@@ -247,7 +247,7 @@ class WebCrawler():
             offer_terms = self.getTsandCs(li)
             offer_affiliate_link = "http://example.com"#TODO
 
-            if "Offer Code".lower() == offer_label.lower():
+            if "Offer Code" == offer_label:
                 offer_code = self.getOfferCode(offer_external_id,category)
             else:
                 offer_code = None

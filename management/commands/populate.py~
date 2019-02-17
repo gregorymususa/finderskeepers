@@ -180,9 +180,9 @@ class WebCrawler():
         return False
 
     def getOfferLabel(self, li):
-        if "Voucher Code" == li.select('span.c-offer__label')[0].get_text().strip() or "Unique Code" == li.select('span.c-offer__label')[0].get_text().strip():
+        if "Voucher Code".lower() == li.select('span.c-offer__label')[0].get_text().strip().lower() or "Unique Code".lower() == li.select('span.c-offer__label')[0].get_text().strip().lower():
             return "Offer Code"
-        elif "Sale" == li.select('span.c-offer__label')[0].get_text().strip():
+        elif "Sale".lower() == li.select('span.c-offer__label')[0].get_text().strip().lower():
             return "Sale"
         else:
             return None
@@ -247,7 +247,7 @@ class WebCrawler():
             offer_terms = self.getTsandCs(li)
             offer_affiliate_link = "http://example.com"#TODO
 
-            if "Offer Code" == offer_label:
+            if "Offer Code".lower() == offer_label.lower():
                 offer_code = self.getOfferCode(offer_external_id,category)
             else:
                 offer_code = None
@@ -261,7 +261,7 @@ class WebCrawler():
                 o.category.add(c)
             else:#ELSE update the Org.
                 o = o_tuple[0]
-                if "http://example.com" == o.website:
+                if "http://example.com".lower() == o.website.lower():
                     o.website = org_website
 
                 if None == o.slug:

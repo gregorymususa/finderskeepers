@@ -60,7 +60,7 @@ $ cd /etc/apache2/sites-available
 
 $ sudo vim 000-default.conf
 
-+--------------------------------
+```
 <VirtualHost *:80>
   
   <Directory /home/gunter/couponfinder-env/couponfinderproject/couponfinderproject>
@@ -72,14 +72,15 @@ $ sudo vim 000-default.conf
     </Files>
 
   </Directory>
-|
-|  WSGIDaemonProcess couponfinder python-home=/home/gunter/couponfinder-env python-path=/home/gunter/couponfinder-env/couponfinderproject
-|  WSGIProcessGroup couponfinder
-|  WSGIScriptAlias / /home/gunter/couponfinder-env/couponfinderproject/couponfinderproject/wsgi.py
 
-|</VirtualHost>
+  WSGIDaemonProcess couponfinder python-home=/home/gunter/couponfinder-env python-path=/home/gunter/couponfinder-env/couponfinderproject
+  
+  WSGIProcessGroup couponfinder
+  
+  WSGIScriptAlias / /home/gunter/couponfinder-env/couponfinderproject/couponfinderproject/wsgi.py
 
-+--------------------------------
+</VirtualHost>
+```
 
 $ sudo apache2ctl configtest
 

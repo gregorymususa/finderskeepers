@@ -65,21 +65,13 @@ $ sudo vim 000-default.conf
 |<VirtualHost *:80>
 
 |  <Directory /home/gunter/couponfinder-env/couponfinderproject/couponfinderproject>
-
 |    <Files wsgi.py>
-
 |      Require all granted
-
 |    </Files>
-
 |  </Directory>
-
 |
-
 |  WSGIDaemonProcess couponfinder python-home=/home/gunter/couponfinder-env python-path=/home/gunter/couponfinder-env/couponfinderproject
-
 |  WSGIProcessGroup couponfinder
-
 |  WSGIScriptAlias / /home/gunter/couponfinder-env/couponfinderproject/couponfinderproject/wsgi.py
 
 |</VirtualHost>

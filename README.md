@@ -23,10 +23,12 @@ from django.urls import include
 path('couponfinder/', include('couponfinder.urls')),
 
 
-## IF this is a fresh server/droplet/virtual server/virtual machine - you will need to also install mysqlclient
-## Activate the virtual-env, THEN:
+## For Fresh Servers
+### Activate the virtual-env, THEN:
 $ sudo apt-get install python-dev python3-dev
+
 $ sudo apt-get install default-libmysqlclient-dev
+
 $ pip install mysqlclient
 
 ## You will also need to install autopep8, for the virtual-env

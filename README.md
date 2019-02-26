@@ -7,11 +7,15 @@ To clone the couponfinder app, to my Django project.
 2. Run: git clone https://github.com/gregorymususa/couponfinder.git
 
 THEN
+
 Change the project's settings.py and urls.py
 
 #settings.py#
+
 ALLOWED_HOSTS
+
 INSTALLED_APPS
+
 DATABASES
 
 #urls.py#

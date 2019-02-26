@@ -33,7 +33,7 @@ $ sudo apt-get install default-libmysqlclient-dev
 
 $ pip install mysqlclient
 
-## Install PEP8
+### Install PEP8
 $ pip install autopep8
 
 gq    - to format line
@@ -42,20 +42,20 @@ gqap  - to format consecutive lines of code (i.e. no blank lines in-between)
 
 gggqG - to format whole document
 
-## Install PEP8 globally
+### Install PEP8 globally
 $ sudo apt-get install python-autopep8
 
-## Install External Libraries
+### Install External Libraries
 $ pip install requests
 
 $ pip install beautifulsoup4
 
-## Install Web Server Apache, and Apache Module mod_wsgi
+### Install Web Server Apache, and Apache Module mod_wsgi
 $ sudo apt-get install apache2
 
 $ sudo apt-get install libapache2-mod-wsgi-py3
 
-## Configure Apacahe
+### Configure Apacahe
 $ cd /etc/apache2/sites-available
 
 $ sudo vim 000-default.conf

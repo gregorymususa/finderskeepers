@@ -23,50 +23,71 @@ from django.urls import include
 path('couponfinder/', include('couponfinder.urls')),
 
 
-## For Fresh Servers
-### Activate the virtual-env, THEN:
+## Fresh Droplet Environment Setup
+### Install MYSQL Client
+$ source bin/activate #activate virtual-env
+
 $ sudo apt-get install python-dev python3-dev
 
 $ sudo apt-get install default-libmysqlclient-dev
 
 $ pip install mysqlclient
 
-## You will also need to install autopep8, for the virtual-env
+## Install PEP8
 $ pip install autopep8
+
 gq    - to format line
+
 gqap  - to format consecutive lines of code (i.e. no blank lines in-between)
+
 gggqG - to format whole document
 
-## You should conside installing autopep8, globally on the server
+## Install PEP8 globally
 $ sudo apt-get install python-autopep8
 
-## Project External Libraries - for crawler
+## Install External Libraries
 $ pip install requests
+
 $ pip install beautifulsoup4
 
 ## Install Web Server Apache, and Apache Module mod_wsgi
 $ sudo apt-get install apache2
+
 $ sudo apt-get install libapache2-mod-wsgi-py3
 
 ## Configure Apacahe
 $ cd /etc/apache2/sites-available
 
 $ sudo vim 000-default.conf
+
 +--------------------------------
+
 |<VirtualHost *:80>
+
 |  <Directory /home/gunter/couponfinder-env/couponfinderproject/couponfinderproject>
+
 |    <Files wsgi.py>
+
 |      Require all granted
+
 |    </Files>
+
 |  </Directory>
+
 |
+
 |  WSGIDaemonProcess couponfinder python-home=/home/gunter/couponfinder-env python-path=/home/gunter/couponfinder-env/couponfinderproject
+
 |  WSGIProcessGroup couponfinder
+
 |  WSGIScriptAlias / /home/gunter/couponfinder-env/couponfinderproject/couponfinderproject/wsgi.py
+
 |</VirtualHost>
+
 +--------------------------------
 
 $ sudo apache2ctl configtest
+
 Syntax OK
 
 $ sudo systemctl restart apache2

@@ -88,6 +88,37 @@ Syntax OK
 
 $ sudo systemctl restart apache2
 
+### Setup Static Files
+$ mkdir /var/www/couponfinder/static
+
+$ vim /couponfinder-env/couponfinderproject/couponfinderproject/settings.py
+
+```
+STATIC_ROOT = '/var/www/static/'
+```
+
+$ sudo chmod 777 static/
+
+$ ./manage.py collectstatic #this will create the 'couponfinder' directory, inside static
+
+$ cd static
+
+$ sudo chmod 777 -R couponfinder/ #change the mode of this folder, to give it write permissions
+
+$ ./manage.py collectstatic
 
 
+### Update Apache Config
+$ sudo /etc/apache2/sites-available/vim 000-default.conf
+
+```
+Alias /static /var/www/static
+<Directory /var/www/static/>
+  Require all granted
+</Directory>
+```
+
+$ sudo apache2ctl configtest
+
+$ sudo systemctl restart apache2
 .

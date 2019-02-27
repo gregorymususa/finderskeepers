@@ -46,9 +46,18 @@ gggqG - to format whole document
 $ sudo apt-get install python-autopep8
 
 ### Install External Libraries
+#### Requests
 $ pip install requests
 
+#### Beautfiul Soup
 $ pip install beautifulsoup4
+
+#### SASS
+$ sudo apt-get update
+
+$ sudo apt-get install ruby-full rubygems
+
+$ sudo gem install sass
 
 ### Install Web Server Apache, and Apache Module mod_wsgi
 $ sudo apt-get install apache2

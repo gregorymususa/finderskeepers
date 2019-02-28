@@ -52,10 +52,10 @@ footer {
 }
 
 $theme-colors: (
-  primary: #933838,   /*Brand Color   (Main identity)*/
+  primary: #FF6600,   /*Brand Color   (Main identity)*/
   secondary:#BA7A63,  /*Dark Accent   (Another accent color, not all colours need to be used)*/
   success:#628d49,
-  info:#909195,       /*Light Accent  (Button)*/
+  info:#211B22,       /*Light Accent  (Button)*/
   warning:#df7c11,
   danger:#f44336,
   light:#F0EFED,      /*Light Shades  (Background or Text)*/
@@ -73,23 +73,11 @@ $theme-colors: (
 /************************************************/
 .ui-menu-item {
   @extend 
-    .list-group-item,
-    .bg-light,
-    .text-primary,
-    .border,
-    .border-primary,
-    .rounded-0,
-    .w-100,
-    .mx-auto;
-}
-
-.couponfinder-search-result-item {
-  @extend .bg-light;
+    .list-group-item;
 }
 
 .ui-autocomplete {
   @extend
-    .bg-light,
     .couponfinder_dropshadow;
   padding-inline-start:0px !important;
   padding:0px !important;

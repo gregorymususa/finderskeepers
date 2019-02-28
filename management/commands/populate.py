@@ -72,9 +72,9 @@ class WebCrawler():
         elif "Technology".lower() == cat_name.lower():
             r = requests.get("https://www.myvouchercodes.co.uk/system/reveal/" + extID +
                              "?log=1&email=0&brand=&justloggedin=0&url=/technology-electrical", headers=headers)
-        elif "Groceries".lower() == cat_name.lower():
+        elif "Health".lower() == cat_name.lower():
             r = requests.get("https://www.myvouchercodes.co.uk/system/reveal/" + extID +
-                             "?log=1&email=0&brand=&justloggedin=0&url=/food-drink", headers=headers)
+                             "?log=1&email=0&brand=&justloggedin=0&url=/health-beauty", headers=headers)
         elif "Sports".lower() == cat_name.lower():
             r = requests.get("https://www.myvouchercodes.co.uk/system/reveal/" + extID +
                              "?log=1&email=0&brand=&justloggedin=0&url=/sports-fitness-outdoors", headers=headers)
@@ -105,9 +105,9 @@ class WebCrawler():
         elif "Technology".lower() == cat_name.lower():
             r = requests.get(
                 'https://www.myvouchercodes.co.uk/technology-electrical', headers=headers)
-        elif "Groceries".lower() == cat_name.lower():
+        elif "Health".lower() == cat_name.lower():
             r = requests.get(
-                'https://www.myvouchercodes.co.uk/food-drink', headers=headers)
+                'https://www.myvouchercodes.co.uk/health-beauty', headers=headers)
         elif "Sports".lower() == cat_name.lower():
             r = requests.get(
                 'https://www.myvouchercodes.co.uk/sports-fitness-outdoors', headers=headers)
@@ -216,7 +216,7 @@ class WebCrawler():
     def crawl(self, category):
         """
         Starts the script, with the following mandatory parameter:
-        category  - "Fashion", "Travel", "Experiences", "Restaurants", "Technology", "Groceries", "Sports"
+        category  - "Fashion", "Travel", "Experiences", "Restaurants", "Technology", "Health", "Sports"
         """
         r= self.requests_get_category(category)
         if False == r:
@@ -284,7 +284,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('method', nargs=1, choices=['crawler', 'provider'])
         parser.add_argument('category', nargs=1, choices=[
-                            'experiences', 'fashion', 'groceries', 'restaurants', 'sports', 'technology', 'travel'])
+                            'experiences', 'fashion', 'health', 'restaurants', 'sports', 'technology', 'travel'])
 
     def handle(self, *args, **options):
         # handle the command

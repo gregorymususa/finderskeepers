@@ -62,7 +62,7 @@ def index(request):
         category=Category.objects.get(name="Experiences")).order_by('?')[0:4]
 
     sm_groceries = Offer.objects.filter(
-        category=Category.objects.get(name="Groceries")).order_by('?')[0:4]
+        category=Category.objects.get(name="Health")).order_by('?')[0:4]
 
     sm_restaurants = Offer.objects.filter(
         category=Category.objects.get(name="Restaurants")).order_by('?')[0:4]
@@ -89,7 +89,7 @@ def index(request):
         category=Category.objects.get(name="Experiences")).order_by('?')[0:9]
 
     lg_groceries = Offer.objects.filter(
-        category=Category.objects.get(name="Groceries")).order_by('?')[0:9]
+        category=Category.objects.get(name="Health")).order_by('?')[0:9]
 
     lg_restaurants = Offer.objects.filter(
         category=Category.objects.get(name="Restaurants")).order_by('?')[0:9]

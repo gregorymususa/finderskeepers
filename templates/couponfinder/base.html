@@ -64,7 +64,7 @@
     }
   </style>
 
-  <meta name="theme-color" content="#313131" />
+  <meta name="theme-color" content="#FF6600" />
   <title>Coupon Finder</title>
 </head>
 
@@ -107,9 +107,9 @@
       <form class="form-inline flex-nowrap w-75 mx-auto" action="{% url 'results' %}" method="GET">
 
         {% if search_term %}
-          <input class="form-control bg-light text-primary w-100 border-0" id="couponfinder-md-typeahead-autocomplete-selector" spellcheck="false" autocomplete="off" name="business_name" style="outline:none !important;" type="text" value="{{search_term}}" />
+          <input class="form-control bg-white text-primary w-100 border-0" id="couponfinder-md-typeahead-autocomplete-selector" spellcheck="false" autocomplete="off" name="business_name" style="outline:none !important;" type="text" value="{{search_term}}" />
         {% else %}
-          <input class="form-control bg-light text-primary w-100 border-0" id="couponfinder-md-typeahead-autocomplete-selector" spellcheck="false" autocomplete="off" name="business_name" style="outline:none !important;" type="text" placeholder="Search Business Name..." />
+          <input class="form-control bg-white text-primary w-100 border-0" id="couponfinder-md-typeahead-autocomplete-selector" spellcheck="false" autocomplete="off" name="business_name" style="outline:none !important;" type="text" placeholder="Search Business Name..." />
         {% endif %}
 
         <button class="btn btn-dark"><i class="fas fa-search"></i></button>

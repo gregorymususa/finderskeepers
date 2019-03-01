@@ -160,12 +160,12 @@
     {% endblock %}
   </main>
 
-  <footer class="fixed-bottom bg-primary text-light" style="box-shadow:0px -5px 5px -5px #333; border-top:3px solid #FF6600; border-bottom:5px solid #FF6600;">
+  <footer class="fixed-bottom bg-dark text-primary" style="box-shadow:0px -5px 5px -5px #333; border-top:3px solid #FF6600; padding-bottom:5px;">
     <div class="container">
       <div class="row">
         {% if footer_categories %}
         {% for category in footer_categories %}
-        <div class="col-3 p-1 text-center"><a class="text-light" href="{% url 'category' category.name|lower %}">{{category.name}}</a></div>
+        <div class="col-3 p-1 text-center"><a class="text-primary" href="{% url 'category' category.name|lower %}">{{category.name}}</a></div>
         {% endfor %}
         {% endif %}
         <div class="col-3 p-1 text-center">More</div>
@@ -173,12 +173,12 @@
       <div class="row">
         {% if footer_categories %}
         {% for category in footer_categories %}
-        <div class="col-3 p-1 text-center"><a href="{% url 'category' category.name|lower %}"><i class="fas {{category.icon}} fa-2x text-light"></i></a></div>
+        <div class="col-3 p-1 text-center"><a href="{% url 'category' category.name|lower %}"><i class="fas {{category.icon}} fa-2x text-primary"></i></a></div>
         {% endfor %}
         {% endif %}
         <div class="col-3 p-1 text-center">
           <a href="#couponfinder-collapsed-footer-nav" data-toggle="collapse" data-target="#couponfinder-collapsed-footer-nav">
-            <i class="fas fa-bars fa-2x text-light"></i>
+            <i class="fas fa-bars fa-2x text-primary"></i>
           </a>
         </div>
       </div>
@@ -187,14 +187,14 @@
       <div class="row">
         {% if addt_footer_categories %}
         {% for category in addt_footer_categories %}
-        <div class="col-3 p-1 text-center"><a class="text-light" href="{% url 'category' category.name|lower %}">{{category.name}}</a></div>
+        <div class="col-3 p-1 text-center"><a class="text-primary" href="{% url 'category' category.name|lower %}">{{category.name}}</a></div>
         {% endfor %}
         {% endif %}
       </div>
       <div class="row">
         {% if addt_footer_categories %}
         {% for category in addt_footer_categories %}
-        <div class="col-3 p-1 text-center"><a href="{% url 'category' category.name|lower %}"><i class="fas {{category.icon}} fa-2x text-light"></i></a></div>
+        <div class="col-3 p-1 text-center"><a href="{% url 'category' category.name|lower %}"><i class="fas {{category.icon}} fa-2x text-primary"></i></a></div>
         {% endfor %}
         {% endif %}
       </div>

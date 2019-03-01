@@ -130,9 +130,9 @@
       <form class="form-inline flex-nowrap w-50 mx-auto" action="{% url 'results' %}" method="GET">
 
         {% if search_term %}
-          <input class="form-control bg-light text-primary w-100 border-0" id="couponfinder-lg-typeahead-autocomplete-selector" spellcheck="false" autocomplete="off" name="business_name" style="outline:none !important;" type="text" value="{{search_term}}" />
+          <input class="form-control bg-white text-primary w-100 border-0" id="couponfinder-lg-typeahead-autocomplete-selector" spellcheck="false" autocomplete="off" name="business_name" style="outline:none !important;" type="text" value="{{search_term}}" />
         {% else %}
-          <input class="form-control bg-light text-primary w-100 border-0" id="couponfinder-lg-typeahead-autocomplete-selector" spellcheck="false" autocomplete="off" name="business_name" style="outline:none !important;" type="text" placeholder="Search Business Name..." />
+          <input class="form-control bg-white text-primary w-100 border-0" id="couponfinder-lg-typeahead-autocomplete-selector" spellcheck="false" autocomplete="off" name="business_name" style="outline:none !important;" type="text" placeholder="Search Business Name..." />
         {% endif %}
 
         <button class="btn btn-dark"><i class="fas fa-search"></i></button>
@@ -147,7 +147,7 @@
         {% if categories %}
           {% for category in categories %}
             <li class="nav-item">
-              <a class="nav-link bg-primary text-light rounded-0" href="{% url 'category' category.name|lower %}">{{category}}</a>
+              <a class="nav-link bg-primary text-white rounded-0" href="{% url 'category' category.name|lower %}">{{category}}</a>
             </li>
           {% endfor %}
         {% endif %}

@@ -1,4 +1,5 @@
 <div class="row couponfinder-sm-md-content px-2">
+{% load static%}
   {% if offers %}
   {% for offer in offers %}
   <div class="col-sm-12 col-md-6 mt-3 mb-5 text-dark couponfinder-offer">
@@ -10,7 +11,7 @@
           <div class="row">
             <div class="col-12 px-0 text-center">
               {% if '' != offer.organization.logo %}
-                <img alt="Organization Logo" class="w-50" style="max-width:12rem;" src="{% url offer.organization.logo %}">
+                <img alt="Organization Logo" class="w-50" style="max-width:12rem;" src="{% static offer.organization.logo %}">
               {% else %}
                 <img alt="Organization Logo" class="w-50" style="max-width:12rem;" src="{% url 'couponfinder_org_365_Tickets' %}">
               {% endif %}

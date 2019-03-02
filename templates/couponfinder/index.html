@@ -1,4 +1,5 @@
 {% extends 'couponfinder/base.html' %}
+{% load static %}
 {% block main %}
   <style type="text/css">
     /* Large Displays */
@@ -48,7 +49,7 @@
               <div class="row">
                 <div class="col-12 px-0 text-center">
                   {% if '' != offer.organization.logo %}
-                    <img alt="Organization Logo" class="w-50" style="max-width:12rem;" src="{% url offer.organization.logo %}">xx
+                    <img alt="Organization Logo" class="w-50" style="max-width:12rem;" src="{% static offer.organization.logo %}">
                   {% else %}
                     <img alt="Organization Logo" class="w-50" style="max-width:12rem;" src="{% url 'couponfinder_org_365_Tickets' %}">
                   {% endif %}
@@ -117,7 +118,7 @@
       {% if category.name == offer.category.name %}
         <div class="card w-100 mb-5 bg-light text-dark couponfinder-offer text-center couponfinder_dropshadow" style="background-image:url('http://yetanothersandbox.com/images/card-bg.png');">
           {% if '' != offer.organization.logo %}
-            <img alt="Organization Logo" class="card-img-top my-3 mx-auto p-1 bg-light couponfinder_dropshadow" style="width:5.5rem; height:auto;" src="{% url offer.organization.logo %}">
+            <img alt="Organization Logo" class="card-img-top my-3 mx-auto p-1 bg-light couponfinder_dropshadow" style="width:5.5rem; height:auto;" src="{% static offer.organization.logo %}">
           {% else %}
             <img alt="Organization Logo" class="card-img-top my-3 mx-auto p-1 bg-light couponfinder_dropshadow" style="width:5.5rem; height:auto;" src="{% url 'couponfinder_org_365_Tickets' %}">
           {% endif %}

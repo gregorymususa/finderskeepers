@@ -130,4 +130,22 @@ Alias /static /var/www/static
 $ sudo apache2ctl configtest
 
 $ sudo systemctl restart apache2
-.
+
+## Company Logo processing
+sudo apt-get update
+
+sudo apt-get install imagemagick -y
+
+wget --no-verbose --no-parent --recursive --level=1 --no-directories http://yetanothersandbox.com/logos/
+
+identify -format "%w x %h" image.png
+
+sudo convert image.png -resize 88x88\> image.jpg
+
+### Thoughts on Algorithm
+1. Create a command, that does the following:
+2. Looks at all Organization.logo - IF an Organization has a blank (or what exists is not returing HTTP 200):
+3. Go to static/couponfinder/logo/; and find an image containing the filename Organization.slug
+4. IF the image is square, do nothing ELSE make the image square (imagemagic)
+5. Add the new image name to Organization.logo
+6. Flag rectangles, for manual intervention / make sure to only add square and close to square logos. 

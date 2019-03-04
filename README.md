@@ -138,7 +138,14 @@ sudo apt-get install imagemagick -y
 
 wget --no-verbose --no-parent --recursive --level=1 --no-directories http://yetanothersandbox.com/logos/
 
+#### Identify image dimensions
 identify -format "%w x %h" image.png
+
+#### Identify image format
+identify -verbose output.png | grep Format
+
+#### Convert image
+sudo convert image.jpg image.png
 
 #### Brutal resize
 sudo convert image.png -resize 88x88\> image.jpg

@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.db import IntegrityError
-from couponfinder.models import Category, Organization, Offer
+from couponfinder.models import Organization
 import requests
 import configparser
 

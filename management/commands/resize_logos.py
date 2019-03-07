@@ -31,7 +31,7 @@ class Command(BaseCommand):
                 x_offset = (h - w)/2
                 y_offset = 0
                 w = h
-            elif w >= h:
+            elif w > h:
                 x_offset = 0
                 y_offset = (w - h)/2
                 h = w

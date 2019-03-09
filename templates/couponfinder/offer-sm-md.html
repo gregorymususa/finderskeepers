@@ -12,8 +12,6 @@
             <div class="col-12 px-0 text-center">
               {% if '' != offer.organization.logo %}
                 <img alt="Organization Logo" class="w-50" style="max-width:12rem;" src="{% static offer.organization.logo %}">
-              {% else %}
-                <img alt="Organization Logo" class="w-50" style="max-width:12rem;" src="{% url 'couponfinder_org_365_Tickets' %}">
               {% endif %}
             </div>
             <div class="col-12">

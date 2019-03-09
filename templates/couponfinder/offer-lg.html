@@ -4,12 +4,13 @@
 {% for offer in offers %}
   <div class="card w-100 mb-5 bg-light text-dark couponfinder-offer text-center couponfinder_dropshadow" style="background-image:url('http://yetanothersandbox.com/images/card-bg.png');">
     {% if "Offer Code" != offer.label %}
-      <!--The card should not have an image-->
+      <!--Possible TODO: Bring special attention to the card-->
+      {% if '' != offer.organization.logo %}
+        <img alt="Organization Logo" class="card-img-top my-3 mx-auto p-1 bg-light couponfinder_dropshadow" style="width:5.5rem; height:auto;" src="{% static offer.organization.logo %}">
+      {% endif %}
     {% else %}
       {% if '' != offer.organization.logo %}
         <img alt="Organization Logo" class="card-img-top my-3 mx-auto p-1 bg-light couponfinder_dropshadow" style="width:5.5rem; height:auto;" src="{% static offer.organization.logo %}">
-      {% else %}
-        <img alt="Organization Logo" class="card-img-top my-3 mx-auto p-1 bg-light couponfinder_dropshadow" style="width:5.5rem; height:auto;" src="{% url 'couponfinder_org_365_Tickets' %}">
       {% endif %}
     {%endif%}
     <div class="card-body bg-white border-top border-top-dark">

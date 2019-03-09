@@ -1,4 +1,5 @@
 {% extends 'couponfinder/base.html' %}
+{% load static %}
 {% block main %}
   <style type="text/css">
     /* Large Displays */
@@ -34,7 +35,7 @@
         {% for organization in organizations %}
           <li class="list-group-item border-0 my-1 couponfinder-search-result-item">
             {% if '' != organization.logo %}
-              <img src="{% url organization.logo %}" style="width:2rem" />
+              <img src="{% static organization.logo %}" style="width:2rem" />
             {% else %}
               <img src="{% url 'couponfinder_org_365_Tickets' %}" style="width:2rem" />
             {% endif %}
@@ -55,9 +56,7 @@
         {% for organization in organizations %}
           <li class="list-group-item border-0 my-1 couponfinder-search-result-item">
             {% if '' != organization.logo %}
-              <img src="{% url organization.logo %}" style="width:2rem" />
-            {% else %}
-              <img src="{% url 'couponfinder_org_365_Tickets' %}" style="width:2rem" />
+              <img src="{% static organization.logo %}" style="width:2rem" />
             {% endif %}
             <a href="{% url 'business' organization.slug %}" class="text-dark font-weight-bold">{{organization.name}}</a>
           </li>

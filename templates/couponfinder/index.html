@@ -56,7 +56,7 @@
                   <div class="card-title text-center font-weight-bold">{{ offer.description }} at {{ offer.organization.name }}</div>
                   <div class="card-text text-center">
                     {% if "Offer Code" == offer.label %}
-                      <p class="bg-info text-white py-2"><strong>{{ offer.code }}</strong></p>
+                      <p class="bg-primary text-white py-2"><strong>{{ offer.code }}</strong></p>
                     {% endif %}
                     <a class="text-primary d-inline-block w-100 mb-2" href="{{offer.affiliate_link}}">Visit site & get promotion</a>
                     <a class="text-primary d-inline-block w-100" href="{% url 'business' offer.organization.slug %}">See all from {{ offer.organization.name }}</a>
@@ -124,7 +124,7 @@
                 <div class="card-title font-weight-bold mb-4">{{ offer.description }} at {{ offer.organization.name }}</div>
                 <div class="card-text">
                   {% if "Offer Code" == offer.label %}
-                    <p class="bg-info text-white py-1"><strong>{{ offer.code }}</strong></p>
+                    <p class="bg-primary text-white py-1"><strong>{{ offer.code }}</strong></p>
                   {% endif %}
                   <a class="text-primary d-inline-block w-100 mb-2" href="{{offer.affiliate_link}}"><small>Visit site & get promotion</small></a>
                   <a class="text-primary d-inline-block w-100" href="{% url 'business' offer.organization.slug %}"><small>See all from {{ offer.organization.name }}</small></a>
@@ -132,7 +132,7 @@
               </div>
             </div>
           </div>
-          <div class="card-footer clearfix" style="background-color:#f7f6ea; font-size:0.75rem;">
+          <div class="card-footer clearfix" style="background-color:#ffffff; font-size:0.75rem;">
             <span class="float-left">
               <i class="far fa-clock"></i>
               {% if offer.is_while_stocks_last %}

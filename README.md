@@ -159,6 +159,22 @@ Create a canvas (of the desired size)
 
 Make a composite of the canvas and the target image; use -geometry to offset the target image.
 
+#### Adding a favicon.ico
+```
+$ cd ~..../couponfinder/static/couponfinder
+
+$ sudo wget --no-verbose --no-parent --recursive --level=1 --no-directories http://yetanothersandbox.com/images/favicon-1.png
+$ sudo wget --no-verbose --no-parent --recursive --level=1 --no-directories http://yetanothersandbox.com/images/favicon-2.png
+
+$ convert favicon-1.png -define icon:auto-resize=64,48,32,16 favicon.ico
+$ convert favicon-2.png -define icon:auto-resize=64,48,32,16 favicon.ico
+
+$ ./manage.py collectstatic
+
+$ vim base.html
+<link rel="shortcut icon" href="{% static "couponfinder/favicon.ico" %}" type="image/x-icon">
+```
+
 ### Thoughts on Algorithm
 1. Create a command, that does the following:
 2. Looks at all Organization.logo - IF an Organization has a blank (or what exists is not returing HTTP 200):

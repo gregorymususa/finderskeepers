@@ -31,6 +31,11 @@ $ cd couponfinder-env
 
 $ django-admin startproject couponfinderproject
 
+### Install Django Apps
+$ vim settings.py
+
+INSTALLED_APPS = ['couponfinder.apps.CouponfinderConfig',.....]
+
 ### Install MYSQL Client
 $ source bin/activate #activate virtual-env
 

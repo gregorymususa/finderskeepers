@@ -36,7 +36,7 @@ $ vim settings.py
 
 INSTALLED_APPS = ['couponfinder.apps.CouponfinderConfig',.....]
 
-### Install MYSQL Client
+### Install MYSQL Client (and configure it in settings.py)
 $ source bin/activate #activate virtual-env
 
 $ sudo apt-get install python-dev python3-dev

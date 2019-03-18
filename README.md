@@ -24,9 +24,14 @@ path('couponfinder/', include('couponfinder.urls')),
 
 
 ## Fresh Droplet Environment Setup
-### Install MYSQL Client
+### Setup Virtual-Env and Django Project
 $ virtualenv --python=python3 couponfinder-env
 
+$ cd couponfinder-env
+
+$ django-admin startproject couponfinderproject
+
+### Install MYSQL Client
 $ source bin/activate #activate virtual-env
 
 $ sudo apt-get install python-dev python3-dev

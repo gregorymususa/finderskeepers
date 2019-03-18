@@ -25,6 +25,8 @@ path('couponfinder/', include('couponfinder.urls')),
 
 ## Fresh Droplet Environment Setup
 ### Install MYSQL Client
+$ virtualenv --python=python3 couponfinder-env
+
 $ source bin/activate #activate virtual-env
 
 $ sudo apt-get install python-dev python3-dev

@@ -68,7 +68,7 @@
   </style>
 
   <meta name="theme-color" content="#FF6600" />
-  <title>Coupon Finder</title>
+  <title>DiscountTed &mdash; show more love, for less</title>
 </head>
 
 <body class="bg-light">
@@ -77,7 +77,7 @@
     <!-- Phones-->
     <nav class="navbar navbar-expand-md fixed-top navbar-dark bg-primary couponfinder_dropshadow couponfinder-sm-navigation" style="border-bottom:3px solid #FF6600">
       <div class="container">
-        <a class="navbar-brand" href="{% url 'index' %}">
+        <a class="navbar-brand" href="{% url 'home' %}">
           <img style="width:2.25rem;" src="{% static "couponfinder/brand_assets/screen_ted-white_alt-2.png" %}">
           <img src="http://yetanothersandbox.com/images/jina-inverted.png" style="width:8rem">
         </a>
@@ -106,7 +106,7 @@
     <!-- Tablets -->
     <nav class="navbar navbar-expand-md mb-0 navbar-dark bg-primary couponfinder-md-navigation">
       <div class="mx-auto text-center">
-        <a class="navbar-brand" href="/couponfinder/">
+        <a class="navbar-brand" href="{% url 'home' %}">
           <img style="width:3rem;" src="{% static "couponfinder/brand_assets/screen_ted-white_alt.png" %}"><br>
           <img src="http://yetanothersandbox.com/images/jina-inverted.png">
         </a>
@@ -132,7 +132,7 @@
     <!-- Large Displays -->
     <nav class="navbar navbar-expand-md navbar-dark bg-primary couponfinder-lg-navigation">
       <div class="mx-auto text-center">
-        <a class="navbar-brand" href="/couponfinder/">
+        <a class="navbar-brand" href="{% url 'home' %}">
           <img style="width:3rem;" src="{% static "couponfinder/brand_assets/screen_ted-white_alt.png" %}"><br>
           <img src="http://yetanothersandbox.com/images/jina-inverted.png">
         </a>
@@ -213,7 +213,7 @@
     </div>
   </footer>
 
-  <span id="index" style="display:none !important;"> {% url 'index' %}  </span>
+  <span id="index" style="display:none !important;"> {% url 'home' %}  </span>
   
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
     crossorigin="anonymous"></script>

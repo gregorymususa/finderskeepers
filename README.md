@@ -128,6 +128,10 @@ $ sudo chmod 777 -R couponfinder/ #change the mode of this folder, to give it wr
 
 $ ./manage.py collectstatic
 
+### Project urls.py (nb. not the app urls.py)
+from couponfinder import views
+
+urlpatterns = [path('',views.index, name='home')]
 
 ### Update Apache Config
 $ sudo /etc/apache2/sites-available/vim 000-default.conf

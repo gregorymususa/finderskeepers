@@ -45,6 +45,8 @@ $ sudo apt-get install default-libmysqlclient-dev
 
 $ pip install mysqlclient
 
+$ pip install pytz
+
 ### Install PEP8
 $ pip install autopep8
 

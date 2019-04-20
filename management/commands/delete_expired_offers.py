@@ -1,7 +1,8 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.db import IntegrityError
-from couponfinder.models import Offer, Category
-from datetime import datetime, date, time, timezone
+from couponfinder.models import Offer
+from datetime import datetime
+import pytz
 
 class Command(BaseCommand):
     help = 'Removes expired offers.'
@@ -11,6 +12,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # handle the command
-        for o in Offer.objects.filter(category=Category.objects.get(name="Travel")):
-            if datetime.now(timezone.utc) > o.expiry_date:
-                o.delete()
+        Offer.objects.filter(expiry_date__lt=datetime.now(pytz.utc)).delete()

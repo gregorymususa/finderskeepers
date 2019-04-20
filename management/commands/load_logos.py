@@ -11,7 +11,7 @@ class Command(BaseCommand):
     def file_exists(self, org_logo):
         config = configparser.ConfigParser()
         config.read("config.ini")
-        org_logo_url = "http://"+config['environment']['host']+"/static/"+org_logo
+        org_logo_url = "https://"+config['environment']['host']+"/static/"+org_logo
 
         r = requests.head(org_logo_url)
         

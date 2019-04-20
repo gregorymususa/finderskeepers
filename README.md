@@ -156,26 +156,13 @@ sudo apt-get install imagemagick -y
 
 wget --no-verbose --no-parent --recursive --level=1 --no-directories http://yetanothersandbox.com/logos/
 
-#### Identify image dimensions
-identify -format "%w x %h" image.png
+#### Custom Commands
+../../../../manage.py resize_logos *
+./manage.py collectstatic
 
-#### Identify image format
-identify -verbose output.png | grep Format
+sudo systemctl restart apache2
 
-#### Convert image
-sudo convert image.jpg image.png
-
-#### Brutal resize
-sudo convert image.png -resize 88x88\> image.jpg
-
-#### Adding white space to rectangular images
-sudo convert -size 504x504 xc:white canvas.png
-
-sudo convert canvas.png target.png -geometry +0+200 -composite output.png
-
-Create a canvas (of the desired size)
-
-Make a composite of the canvas and the target image; use -geometry to offset the target image.
+./manage.py load_logos slug slug slug 
 
 #### Adding a favicon.ico
 ```

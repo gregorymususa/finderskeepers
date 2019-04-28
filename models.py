@@ -62,3 +62,10 @@ class Offer(models.Model):
     
     category = models.ForeignKey('Category', on_delete=models.CASCADE)
     organization = models.ForeignKey('Organization', on_delete=models.CASCADE)
+
+
+class Flag(models.Model):
+    iso_country_code = models.SlugField('IsoCountryCode', max_length=2, primary_key=True)
+    flag_filename = models.URLField('FlagFilename', max_length=200, blank=True, null=True)
+
+

@@ -149,6 +149,26 @@ $ sudo apache2ctl configtest
 
 $ sudo systemctl restart apache2
 
+### Envrionment Variables
+
+1. Tried to place Environment Variables in $ sudo vim /etc/environment (so it is available globally, from boot)
+
+2. Tried to place Environment Variables in $ sudo vim /etc/apache2/sites-available/000-default.conf (because System Environment Variables != Apache Environment Variables)
+
+Using PassEnv, and SetEnv.
+
+PassEnv: Specifies one or more native system environment variables to make available as internal environment variables, which are available to Apache HTTP Server modules as well as propagated to CGI scripts and SSI pages.
+
+SetEnv: Sets an internal environment variable, which is then available to Apache HTTP Server modules, and passed on to CGI scripts and SSI pages.
+
+Source: https://httpd.apache.org/docs/2.4/mod/mod_env.html#passenv
+
+3. Succeeded when placing Environment Variables in $ vim /coupounfinderproject/couponfinderproject/wsgi.py (because wsgi.py was created for declaring Environment Variables for the Django Process)
+
+os.environ['ENVIRONMENT_VARIABLE'] = 'VALUE'
+
+Source: https://gist.github.com/GrahamDumpleton/b380652b768e81a7f60c
+
 ## Company Logo processing
 sudo apt-get update
 
@@ -158,6 +178,7 @@ wget --no-verbose --no-parent --recursive --level=1 --no-directories http://yeta
 
 #### Custom Commands
 ../../../../manage.py resize_logos *
+
 ./manage.py collectstatic
 
 sudo systemctl restart apache2

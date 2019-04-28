@@ -33,6 +33,8 @@
       .couponfinder-lg-navigation{display:flex;}
       .couponfinder-lg-sub-navigation{display:block;}
       .couponfinder-lg-typeahead-autocomplete{display: flex;}
+      .couponfinder-lg-location{display:block;}
+      .couponfinder-lg-location > img{max-width:1.5rem;}
       footer{display: none;} /*As soon as lg-sub-navigation is displayed, the footer should disappear*/
     }
 
@@ -44,6 +46,8 @@
       .couponfinder-sm-navigation{display:none;}
       .couponfinder-sm-typeahead-autocomplete{display: none;}
       
+      .couponfinder-lg-location{display:block;}
+      .couponfinder-lg-location > img{max-width:1.5rem;}
       .couponfinder-md-navigation{display:flex;}
       .couponfinder-md-typeahead-autocomplete{display: flex;}
     }
@@ -53,6 +57,7 @@
       .couponfinder-lg-navigation{display:none;}
       .couponfinder-lg-sub-navigation{display:none;}
       .couponfinder-lg-typeahead-autocomplete{display: none;}
+      .couponfinder-lg-location{display:none;}
       .couponfinder-md-navigation{display:none;}
       .couponfinder-md-typeahead-autocomplete{display: none;}
 
@@ -138,7 +143,7 @@
         </a>
       </div>
     </nav>
-    <div class="bg-primary pb-4 couponfinder-lg-navigation">
+    <div class="bg-primary pb-2 couponfinder-lg-navigation">
       <form class="form-inline flex-nowrap w-50 mx-auto" action="{% url 'results' %}" method="GET">
 
         {% if search_term %}
@@ -154,6 +159,11 @@
       <div class="w-50 position-absolute" style="z-index:9999;left:25%;" id="couponfinder-lg-typeahead-autocomplete">
       </div>
     </ul>
+    <div class="bg-primary mx-auto pb-3 text-center text-white couponfinder-lg-location">
+      <small>Viewing offers for location:</small>
+      <img src="{% static flag.flag_filename %}" />
+      <small>{{visitor_country_code}}</small>
+    </div>
     <div class="bg-primary couponfinder-lg-sub-navigation">
       <ul class="nav nav-pills nav-fill">
         {% if categories %}

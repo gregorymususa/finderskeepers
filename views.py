@@ -2,9 +2,9 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http import JsonResponse
 from django.template import Template, context, loader
-from .models import Category, Organization, Offer
+from .models import Category, Organization, Offer, Flag
 from django.core.paginator import Paginator
-import os
+import json, os, requests
 
 # Query Set Reference:      https://docs.djangoproject.com/en/2.1/ref/models/querysets/
 
@@ -35,15 +35,60 @@ def get_footer_categories():
 def get_addt_footer_categories():
     return Category.objects.order_by('manual_rank')[3:7]
 
-####################
-# Output Functions #
-####################
+
+def get_visitor_country(visitor_ip):
+    """
+    Returns two-digit ISO Country Code, where the supplied IP address is located
+    ----------------------------------------------------------------------------
+    Parameters
+      visitor_ip : str
+    """
+    api_key = str(os.getenv('IPDB_API_KEY'))
+    output_format = 'json'
+    r = requests.get("http://api.ipinfodb.com/v3/ip-city/?" + "ip=" + str(visitor_ip)  + "&key=" + str(api_key) + "&format=" + str(output_format))
+ 
+    try:
+        if None == r.raise_for_status():
+            output_json = json.loads(r.text)
+            return output_json['countryCode']
+        else:
+            return "False"
+    except:
+        return "trace" 
+
+
+def get_country_flag(iso_country_code):
+    """
+    Returns Flag object (from Models.py), corresponding to the supplied two-digi iso_country_code
+    ---------------------------------------------------------------------------------------------
+    iso_country_code : str (two-digit iso code)
+    """
+    try:
+        f = Flag.objects.get(iso_country_code=iso_country_code)
+    except:
+        return Flag.objects.get(iso_country_code='ZZ')
+    return f
+
+
+#############################################################################################
+# Output Functions                                                                          #
+#                                                                                           #
+# All "Template Rendering" Views, need to have the following functions called at the start: #
+#    categories = get_all_categories()                                                      #
+#    footer_categories = get_footer_categories()                                            #
+#    addt_footer_categories = get_addt_footer_categories()                                  #
+#    visitor_country_code = get_visitor_country(request.META['REMOTE_ADDR'])                #
+#                                                                                           #
+# Becase base.html uses the data from these results                                         #
+#############################################################################################
 
 def index(request):
     categories = get_all_categories()
     footer_categories = get_footer_categories()
     addt_footer_categories = get_addt_footer_categories()
-
+    visitor_country_code = get_visitor_country(request.META['REMOTE_ADDR'])
+    flag = get_country_flag(visitor_country_code)
+    
     organizations = Organization.objects.all()
     offers = Offer.objects.all()
 
@@ -105,7 +150,7 @@ def index(request):
 
     context = {'categories': categories, 'organizations': organizations, 'offers': offers,
                'footer_categories': footer_categories, 'addt_footer_categories': addt_footer_categories,
-               'sm_offer_range': sm_offer_range, 'lg_offer_range': lg_offer_range}
+               'sm_offer_range': sm_offer_range, 'lg_offer_range': lg_offer_range, 'visitor_country_code': visitor_country_code, 'flag': flag}
     template = loader.get_template('couponfinder/index.html')
     return HttpResponse(template.render(context, request))
 
@@ -114,6 +159,7 @@ def category(request, category_name_slug):
     categories = get_all_categories()
     footer_categories = get_footer_categories()
     addt_footer_categories = get_addt_footer_categories()
+    visitor_country_code = get_visitor_country(request.META['REMOTE_ADDR'])
 
     page = request.GET.get("page",False)
     if page != False:
@@ -124,7 +170,7 @@ def category(request, category_name_slug):
     category = Category.objects.filter(slug=category_name_slug)[0]
 
     context = {'categories': categories, 'footer_categories': footer_categories, 'addt_footer_categories': addt_footer_categories,
-               'offers': offers, 'category': category}
+               'offers': offers, 'category': category, 'visitor_country_code': visitor_country_code}
     template = loader.get_template('couponfinder/category.html')
     return HttpResponse(template.render(context, request))
 
@@ -149,13 +195,14 @@ def business(request, business_name_slug):
     categories = get_all_categories()
     footer_categories = get_footer_categories()
     addt_footer_categories = get_addt_footer_categories()
+    visitor_country_code = get_visitor_country(request.META['REMOTE_ADDR'])
 
     offers = Offer.objects.filter(organization=Organization.objects.get(slug=business_name_slug))
     
     organization = Organization.objects.get(slug=business_name_slug)
 
     context = {'categories': categories, 'footer_categories': footer_categories, 'addt_footer_categories': addt_footer_categories,
-               'business_name_slug': business_name_slug, 'organization': organization, 'offers': offers}
+               'business_name_slug': business_name_slug, 'organization': organization, 'offers': offers, 'visitor_country_code': visitor_country_code}
     template = loader.get_template('couponfinder/business.html')
     return HttpResponse(template.render(context, request))
 
@@ -164,6 +211,7 @@ def search(request):
     categories = get_all_categories()
     footer_categories = get_footer_categories()
     addt_footer_categories = get_addt_footer_categories()
+    visitor_country_code = get_visitor_country(request.META['REMOTE_ADDR'])
 
     search_term = request.GET['business_name'].strip()
     search_term_keywords = search_term.split(" ")
@@ -260,169 +308,6 @@ def load_file(file_location):
             return HttpResponse(f.read(), content_type="image")
     except IOError:
         return HttpResponse('No Image Found!')
-
-
-def couponfinder_org_365_Tickets(request):
-    return load_file(
-        'F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\organization_logos\\365_Tickets.jpeg')
-
-
-def couponfinder_org_999Inks(request):
-    return load_file(
-        'F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\organization_logos\999Inks.jpg')
-
-
-def couponfinder_org_Abel_Cole(request):
-    return load_file(
-        'F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\organization_logos\Abel_Cole.gif')
-
-
-def couponfinder_org_Activity_Superstore(request):
-    return load_file('F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\organization_logos\Activity_Superstore.jpeg')
-
-
-def couponfinder_org_adidas(request):
-    return load_file(
-        'F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\organization_logos\\adidas.png')
-
-
-def couponfinder_org_All_Bar_One(request):
-    return load_file(
-        'F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\organization_logos\All_Bar_One.jpeg')
-
-
-def couponfinder_org_ao(request):
-    return load_file(
-        'F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\organization_logos\\ao.png')
-
-
-def couponfinder_org_Asda(request):
-    return load_file(
-        'F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\organization_logos\Asda.gif')
-
-
-def couponfinder_org_ATG_Tickets(request):
-    return load_file(
-        'F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\organization_logos\ATG_Tickets.png')
-
-
-def couponfinder_org_Attraction_Tickets_Direct(request):
-    return load_file('F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\organization_logos\Attraction_Tickets_Direct.jpeg')
-
-
-def couponfinder_org_AX_Hotels(request):
-    return load_file(
-        'F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\organization_logos\AX_Hotels.jpeg')
-
-
-def couponfinder_org_Bakerdays(request):
-    return load_file(
-        'F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\organization_logos\Bakerdays.jpeg')
-
-
-def couponfinder_org_Banggood_com(request):
-    return load_file(
-        'F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\organization_logos\Banggood_com.jpeg')
-
-
-def couponfinder_org_Beer_Hawk(request):
-    return load_file(
-        'F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\organization_logos\Beer_Hawk.jpeg')
-
-
-def couponfinder_org_Belgo(request):
-    return load_file(
-        'F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\organization_logos\Belgo.gif')
-
-
-def couponfinder_org_Bella_Italia(request):
-    return load_file(
-        'F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\organization_logos\Bella_Italia.png')
-
-
-def couponfinder_org_Biscuiteers(request):
-    return load_file(
-        'F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\organization_logos\Biscuiteers.jpg')
-
-
-def couponfinder_org_Boden(request):
-    return load_file(
-        'F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\organization_logos\Boden.png')
-
-
-def couponfinder_org_Browns_Restaurant(request):
-    return load_file('F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\organization_logos\Browns_Restaurant.png')
-
-
-def couponfinder_org_Carluccios(request):
-    return load_file(
-        'F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\organization_logos\Carluccios.jpeg')
-
-
-def couponfinder_org_Cartridge_People(request):
-    return load_file('F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\organization_logos\Cartridge_People.png')
-
-
-def couponfinder_org_Charles_Tyrwhitt_Shirts(request):
-    return load_file('F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\organization_logos\Charles_Tyrwhitt_Shirts.png')
-
-
-def couponfinder_org_Cheltenham_Racecourse(request):
-    return load_file('F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\organization_logos\Cheltenham_Racecourse.png')
-
-
-def couponfinder_org_Chi_Chi(request):
-    return load_file(
-        'F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\organization_logos\Chi_Chi.png')
-
-
-def couponfinder_org_Chicken_Cottage(request):
-    return load_file(
-        'F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\organization_logos\Chicken_Cottage.png')
-
-
-def couponfinder_org_Debenhams(request):
-    return load_file(
-        'F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\organization_logos\Debenhams.png')
-
-
-def couponfinder_org_Deliveroo(request):
-    return load_file(
-        'F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\organization_logos\Deliveroo.png')
-
-
-def couponfinder_org_GoCompare(request):
-    return load_file(
-        'F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\organization_logos\GoCompare.png')
-
-
-def couponfinder_org_I_Saw_It_First(request):
-    return load_file(
-        'F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\organization_logos\I_Saw_It_First.png')
-
-
-def couponfinder_org_Iberostar(request):
-    return load_file(
-        'F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\organization_logos\Iberostar.jpg')
-
-
-def couponfinder_org_La_Redoute(request):
-    return load_file(
-        'F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\organization_logos\La_Redoute.png')
-
-
-def couponfinder_org_Senior_Railcard(request):
-    return load_file(
-        'F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\organization_logos\Senior_Railcard.png')
-
-
-def couponfinder_org_Tesco(request):
-    return load_file(
-        'F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\organization_logos\Tesco.png')
-
-
-def couponfinder_org_The_London_Dungeon(request):
-    return load_file('F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\organization_logos\The_London_Dungeon.jpg')
 
 
 def couponfinder_org_Thomas_Cook(request):

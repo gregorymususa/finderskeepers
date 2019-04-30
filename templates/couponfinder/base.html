@@ -34,7 +34,7 @@
       .couponfinder-lg-sub-navigation{display:block;}
       .couponfinder-lg-typeahead-autocomplete{display: flex;}
       .couponfinder-lg-location{display:block;}
-      .couponfinder-lg-location > img{max-width:1.5rem;}
+      .flags{max-width:1.5rem;}
       footer{display: none;} /*As soon as lg-sub-navigation is displayed, the footer should disappear*/
     }
 
@@ -47,7 +47,7 @@
       .couponfinder-sm-typeahead-autocomplete{display: none;}
       
       .couponfinder-lg-location{display:block;}
-      .couponfinder-lg-location > img{max-width:1.5rem;}
+      .flags{max-width:1.5rem;}
       .couponfinder-md-navigation{display:flex;}
       .couponfinder-md-typeahead-autocomplete{display: flex;}
     }
@@ -63,6 +63,7 @@
 
       .couponfinder-sm-navigation{display:flex;}
       .couponfinder-sm-typeahead-autocomplete{display: flex;}
+      .flags{max-width:1.5rem;}
       main{margin-top:6rem !important;}
     }
 
@@ -161,8 +162,10 @@
     </ul>
     <div class="bg-primary mx-auto pb-3 text-center text-white couponfinder-lg-location">
       <small>Viewing offers for location:</small>
-      <img src="{% static flag.flag_filename %}" />
-      <small>{{visitor_country_code}}</small>
+      <a class="text-white" href="#" data-toggle="modal" data-target="#location-modal">
+        <img class="flags" src="{% static flag.flag_filename %}" />
+        <small>{{ flag.country }}</small>
+      </a>
     </div>
     <div class="bg-primary couponfinder-lg-sub-navigation">
       <ul class="nav nav-pills nav-fill">
@@ -175,6 +178,53 @@
         {% endif %}
       </ul>
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="location-modal" tabindex="-1" role="dialog" aria-labelledby="Location Selection Modal" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <form>
+            <div class="modal-header">
+              <h5 class="modal-title" id="location-modal-title">Change Location</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+
+            <div class="modal-body">
+              {% for f in flags %}
+              
+                {% if forloop.counter0|divisibleby:"2" %}
+                  <div class="form-row">
+                {% endif %}
+             
+                <div class="col">
+                  <div class="form-check mb-3">
+                    <input class="form-check-input" type="radio" id="location-{{ f.iso_country_code }}">
+                    <label class="form-check-label" for="location-{{ f.iso_country_code }}">
+                      <img class="flags" src="{% static f.flag_filename %}" />
+                      {{ f.country  }}
+                    </label>
+                  </div>
+                </div>
+            
+                {% if forloop.counter0|divisibleby:"2" %}
+                {% else %}
+                  </div>
+                {% endif %}
+            
+              {% endfor %}
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
+              <input type="submit" class="btn btn-primary" value="Save changes">
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>    
+
   </header>
 
   <main>

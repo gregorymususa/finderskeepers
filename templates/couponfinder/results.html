@@ -36,8 +36,6 @@
           <li class="list-group-item border-0 my-1 couponfinder-search-result-item">
             {% if '' != organization.logo %}
               <img src="{% static organization.logo %}" style="width:2rem" />
-            {% else %}
-              <img src="{% url 'couponfinder_org_365_Tickets' %}" style="width:2rem" />
             {% endif %}
             <a href="{% url 'business' organization.slug %}" class="text-dark font-weight-bold">{{organization.name}}</a>
           </li>

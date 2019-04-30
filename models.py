@@ -67,5 +67,6 @@ class Offer(models.Model):
 class Flag(models.Model):
     iso_country_code = models.SlugField('IsoCountryCode', max_length=2, primary_key=True)
     flag_filename = models.URLField('FlagFilename', max_length=200, blank=True, null=True)
+    country = models.CharField("Country", max_length=200, blank=True, null=True)
 
 

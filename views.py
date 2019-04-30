@@ -78,6 +78,7 @@ def get_country_flag(iso_country_code):
 #    footer_categories = get_footer_categories()                                            #
 #    addt_footer_categories = get_addt_footer_categories()                                  #
 #    visitor_country_code = get_visitor_country(request.META['REMOTE_ADDR'])                #
+#    flag = get_country_flag(visitor_country_code)                                          #
 #                                                                                           #
 # Becase base.html uses the data from these results                                         #
 #############################################################################################
@@ -88,6 +89,7 @@ def index(request):
     addt_footer_categories = get_addt_footer_categories()
     visitor_country_code = get_visitor_country(request.META['REMOTE_ADDR'])
     flag = get_country_flag(visitor_country_code)
+    flags = Flag.objects.all()
     
     organizations = Organization.objects.all()
     offers = Offer.objects.all()
@@ -150,7 +152,7 @@ def index(request):
 
     context = {'categories': categories, 'organizations': organizations, 'offers': offers,
                'footer_categories': footer_categories, 'addt_footer_categories': addt_footer_categories,
-               'sm_offer_range': sm_offer_range, 'lg_offer_range': lg_offer_range, 'visitor_country_code': visitor_country_code, 'flag': flag}
+               'sm_offer_range': sm_offer_range, 'lg_offer_range': lg_offer_range, 'visitor_country_code': visitor_country_code, 'flag': flag, 'flags': flags}
     template = loader.get_template('couponfinder/index.html')
     return HttpResponse(template.render(context, request))
 
@@ -160,6 +162,8 @@ def category(request, category_name_slug):
     footer_categories = get_footer_categories()
     addt_footer_categories = get_addt_footer_categories()
     visitor_country_code = get_visitor_country(request.META['REMOTE_ADDR'])
+    flag = get_country_flag(visitor_country_code)
+    flags = Flag.objects.all()
 
     page = request.GET.get("page",False)
     if page != False:
@@ -170,7 +174,7 @@ def category(request, category_name_slug):
     category = Category.objects.filter(slug=category_name_slug)[0]
 
     context = {'categories': categories, 'footer_categories': footer_categories, 'addt_footer_categories': addt_footer_categories,
-               'offers': offers, 'category': category, 'visitor_country_code': visitor_country_code}
+               'offers': offers, 'category': category, 'visitor_country_code': visitor_country_code, 'flag': flag, 'flags': flags}
     template = loader.get_template('couponfinder/category.html')
     return HttpResponse(template.render(context, request))
 
@@ -196,13 +200,15 @@ def business(request, business_name_slug):
     footer_categories = get_footer_categories()
     addt_footer_categories = get_addt_footer_categories()
     visitor_country_code = get_visitor_country(request.META['REMOTE_ADDR'])
+    flag = get_country_flag(visitor_country_code)
+    flags = Flag.objects.all()
 
     offers = Offer.objects.filter(organization=Organization.objects.get(slug=business_name_slug))
     
     organization = Organization.objects.get(slug=business_name_slug)
 
     context = {'categories': categories, 'footer_categories': footer_categories, 'addt_footer_categories': addt_footer_categories,
-               'business_name_slug': business_name_slug, 'organization': organization, 'offers': offers, 'visitor_country_code': visitor_country_code}
+               'business_name_slug': business_name_slug, 'organization': organization, 'offers': offers, 'visitor_country_code': visitor_country_code, 'flag': flag, 'flags': flags}
     template = loader.get_template('couponfinder/business.html')
     return HttpResponse(template.render(context, request))
 
@@ -212,6 +218,8 @@ def search(request):
     footer_categories = get_footer_categories()
     addt_footer_categories = get_addt_footer_categories()
     visitor_country_code = get_visitor_country(request.META['REMOTE_ADDR'])
+    flag = get_country_flag(visitor_country_code)
+    flags = Flag.objects.all()
 
     search_term = request.GET['business_name'].strip()
     search_term_keywords = search_term.split(" ")
@@ -227,7 +235,7 @@ def search(request):
             organizations = organizations.union(orgs)
 
     context = {'categories': categories, 'footer_categories': footer_categories, 'addt_footer_categories': addt_footer_categories,
-               'search_term': search_term, 'organizations': organizations}
+               'search_term': search_term, 'organizations': organizations, 'visitor_country_code': visitor_country_code, 'flag': flag, 'flags': flags}
     template = loader.get_template('couponfinder/results.html')
     return HttpResponse(template.render(context, request))
 

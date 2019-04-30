@@ -153,6 +153,10 @@ $ sudo systemctl restart apache2
 
 1. Tried to place Environment Variables in $ sudo vim /etc/environment (so it is available globally, from boot)
 
+ENVIRONMENT_VARIABLE='VALUE'
+
+(no need for export, before the variable)
+
 2. Tried to place Environment Variables in $ sudo vim /etc/apache2/sites-available/000-default.conf (because System Environment Variables != Apache Environment Variables)
 
 Using PassEnv, and SetEnv.

@@ -70,6 +70,27 @@ def get_country_flag(iso_country_code):
     return f
 
 
+def get_location(request):
+    """
+    Returns a cookie and a flag object, containing the Visitor's location.
+    If the Visitor requests a new location - Returns the Visitor's new location.
+    
+    If a Cookie does not exists, and the Visitor has not requested a new location / or if the Cookie has been tampered with - Returns the Visitor's IP based location
+    """
+    try:
+        visitor_country_code = request.get_signed_cookie(key=os.environ['COUPONFINDER_COOKIE_KEY_LOCATION'], salt=os.environ['COUPONFINDER_SIGNED_COOKIE_SALT'],
+                                                         max_age=31536000)
+        flag = get_country_flag(visitor_country_code)
+
+        if "POST" == request.method:
+            visitor_country_code = request.POST['location-choice']
+            flag = get_country_flag(visitor_country_code)
+    except:
+        visitor_country_code = get_visitor_country(request.META['REMOTE_ADDR'])
+        flag = get_country_flag(visitor_country_code)
+    return {'visitor_country_code':visitor_country_code,'flag':flag}
+
+
 #############################################################################################
 # Output Functions                                                                          #
 #                                                                                           #
@@ -87,10 +108,10 @@ def index(request):
     categories = get_all_categories()
     footer_categories = get_footer_categories()
     addt_footer_categories = get_addt_footer_categories()
-    visitor_country_code = get_visitor_country(request.META['REMOTE_ADDR'])
-    flag = get_country_flag(visitor_country_code)
+    visitor_country_code = get_location(request)['visitor_country_code']
+    flag = get_location(request)['flag']
     flags = Flag.objects.all()
-    
+
     organizations = Organization.objects.all()
     offers = Offer.objects.all()
 
@@ -150,19 +171,22 @@ def index(request):
     lg_offer_range = lg_fashion.union(
         lg_travel, lg_experiences, lg_groceries, lg_restaurants, lg_sports, lg_technology)
 
-    context = {'categories': categories, 'organizations': organizations, 'offers': offers,
+    context = {'categories': categories, 'organizations': organizations, 'offers': offers, 'visitor_country_code': visitor_country_code, 'flag': flag, 'flags': flags,
                'footer_categories': footer_categories, 'addt_footer_categories': addt_footer_categories,
-               'sm_offer_range': sm_offer_range, 'lg_offer_range': lg_offer_range, 'visitor_country_code': visitor_country_code, 'flag': flag, 'flags': flags}
+               'sm_offer_range': sm_offer_range, 'lg_offer_range': lg_offer_range}
     template = loader.get_template('couponfinder/index.html')
-    return HttpResponse(template.render(context, request))
+    r = HttpResponse(template.render(context, request))
+    r.set_signed_cookie(key=os.environ['COUPONFINDER_COOKIE_KEY_LOCATION'], value=visitor_country_code, salt=os.environ['COUPONFINDER_SIGNED_COOKIE_SALT'],
+                        secure=True, httponly=True, max_age=31536000, domain='discount-ted.com', path='/')
+    return r
 
 
 def category(request, category_name_slug):
     categories = get_all_categories()
     footer_categories = get_footer_categories()
     addt_footer_categories = get_addt_footer_categories()
-    visitor_country_code = get_visitor_country(request.META['REMOTE_ADDR'])
-    flag = get_country_flag(visitor_country_code)
+    visitor_country_code = get_location(request)['visitor_country_code']
+    flag = get_location(request)['flag']
     flags = Flag.objects.all()
 
     page = request.GET.get("page",False)
@@ -176,7 +200,10 @@ def category(request, category_name_slug):
     context = {'categories': categories, 'footer_categories': footer_categories, 'addt_footer_categories': addt_footer_categories,
                'offers': offers, 'category': category, 'visitor_country_code': visitor_country_code, 'flag': flag, 'flags': flags}
     template = loader.get_template('couponfinder/category.html')
-    return HttpResponse(template.render(context, request))
+    r = HttpResponse(template.render(context, request))
+    r.set_signed_cookie(key=os.environ['COUPONFINDER_COOKIE_KEY_LOCATION'], value=visitor_country_code, salt=os.environ['COUPONFINDER_SIGNED_COOKIE_SALT'],
+                        secure=True, httponly=True, max_age=31536000, domain='discount-ted.com', path='/')
+    return r
 
 
 def ajax_category(request, category_name_slug):
@@ -199,8 +226,8 @@ def business(request, business_name_slug):
     categories = get_all_categories()
     footer_categories = get_footer_categories()
     addt_footer_categories = get_addt_footer_categories()
-    visitor_country_code = get_visitor_country(request.META['REMOTE_ADDR'])
-    flag = get_country_flag(visitor_country_code)
+    visitor_country_code = get_location(request)['visitor_country_code']
+    flag = get_location(request)['flag']
     flags = Flag.objects.all()
 
     offers = Offer.objects.filter(organization=Organization.objects.get(slug=business_name_slug))
@@ -210,15 +237,18 @@ def business(request, business_name_slug):
     context = {'categories': categories, 'footer_categories': footer_categories, 'addt_footer_categories': addt_footer_categories,
                'business_name_slug': business_name_slug, 'organization': organization, 'offers': offers, 'visitor_country_code': visitor_country_code, 'flag': flag, 'flags': flags}
     template = loader.get_template('couponfinder/business.html')
-    return HttpResponse(template.render(context, request))
+    r = HttpResponse(template.render(context, request))
+    r.set_signed_cookie(key=os.environ['COUPONFINDER_COOKIE_KEY_LOCATION'], value=visitor_country_code, salt=os.environ['COUPONFINDER_SIGNED_COOKIE_SALT'],
+                        secure=True, httponly=True, max_age=31536000, domain='discount-ted.com', path='/')
+    return r
 
 
 def search(request):
     categories = get_all_categories()
     footer_categories = get_footer_categories()
     addt_footer_categories = get_addt_footer_categories()
-    visitor_country_code = get_visitor_country(request.META['REMOTE_ADDR'])
-    flag = get_country_flag(visitor_country_code)
+    visitor_country_code = get_location(request)['visitor_country_code']
+    flag = get_location(request)['flag']
     flags = Flag.objects.all()
 
     search_term = request.GET['business_name'].strip()
@@ -237,7 +267,10 @@ def search(request):
     context = {'categories': categories, 'footer_categories': footer_categories, 'addt_footer_categories': addt_footer_categories,
                'search_term': search_term, 'organizations': organizations, 'visitor_country_code': visitor_country_code, 'flag': flag, 'flags': flags}
     template = loader.get_template('couponfinder/results.html')
-    return HttpResponse(template.render(context, request))
+    r = HttpResponse(template.render(context, request))
+    r.set_signed_cookie(key=os.environ['COUPONFINDER_COOKIE_KEY_LOCATION'], value=visitor_country_code, salt=os.environ['COUPONFINDER_SIGNED_COOKIE_SALT'],
+                        secure=True, httponly=True, max_age=31536000, domain='discount-ted.com', path='/')
+    return r
 
 
 def ajax_search(request):

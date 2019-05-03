@@ -50,7 +50,11 @@ def get_visitor_country(visitor_ip):
     try:
         if None == r.raise_for_status():
             output_json = json.loads(r.text)
-            return output_json['countryCode']
+            country_code = output_json['countryCode']
+            if country_code in Flag.target_country_codes:
+                return country_code
+            else:
+                return Flag.default_country_code
         else:
             return "False"
     except:

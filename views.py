@@ -175,7 +175,8 @@ def index(request):
     lg_offer_range = lg_fashion.union(
         lg_travel, lg_experiences, lg_groceries, lg_restaurants, lg_sports, lg_technology)
 
-    context = {'categories': categories, 'organizations': organizations, 'offers': offers, 'visitor_country_code': visitor_country_code, 'flag': flag, 'flags': flags,
+    context = {'categories': categories, 'organizations': organizations, 'offers': offers, 'current_visitor_country_code': visitor_country_code,
+               'current_flag': flag, 'flags': flags,
                'footer_categories': footer_categories, 'addt_footer_categories': addt_footer_categories,
                'sm_offer_range': sm_offer_range, 'lg_offer_range': lg_offer_range}
     template = loader.get_template('couponfinder/index.html')
@@ -202,7 +203,7 @@ def category(request, category_name_slug):
     category = Category.objects.filter(slug=category_name_slug)[0]
 
     context = {'categories': categories, 'footer_categories': footer_categories, 'addt_footer_categories': addt_footer_categories,
-               'offers': offers, 'category': category, 'visitor_country_code': visitor_country_code, 'flag': flag, 'flags': flags}
+               'offers': offers, 'category': category, 'current_visitor_country_code': visitor_country_code, 'current_flag': flag, 'flags': flags}
     template = loader.get_template('couponfinder/category.html')
     r = HttpResponse(template.render(context, request))
     r.set_signed_cookie(key=os.environ['COUPONFINDER_COOKIE_KEY_LOCATION'], value=visitor_country_code, salt=os.environ['COUPONFINDER_SIGNED_COOKIE_SALT'],
@@ -239,7 +240,8 @@ def business(request, business_name_slug):
     organization = Organization.objects.get(slug=business_name_slug)
 
     context = {'categories': categories, 'footer_categories': footer_categories, 'addt_footer_categories': addt_footer_categories,
-               'business_name_slug': business_name_slug, 'organization': organization, 'offers': offers, 'visitor_country_code': visitor_country_code, 'flag': flag, 'flags': flags}
+               'business_name_slug': business_name_slug, 'organization': organization, 'offers': offers, 'current_visitor_country_code': visitor_country_code,
+               'current_flag': flag, 'flags': flags}
     template = loader.get_template('couponfinder/business.html')
     r = HttpResponse(template.render(context, request))
     r.set_signed_cookie(key=os.environ['COUPONFINDER_COOKIE_KEY_LOCATION'], value=visitor_country_code, salt=os.environ['COUPONFINDER_SIGNED_COOKIE_SALT'],
@@ -269,7 +271,7 @@ def search(request):
             organizations = organizations.union(orgs)
 
     context = {'categories': categories, 'footer_categories': footer_categories, 'addt_footer_categories': addt_footer_categories,
-               'search_term': search_term, 'organizations': organizations, 'visitor_country_code': visitor_country_code, 'flag': flag, 'flags': flags}
+               'search_term': search_term, 'organizations': organizations, 'current_visitor_country_code': visitor_country_code, 'current_flag': flag, 'flags': flags}
     template = loader.get_template('couponfinder/results.html')
     r = HttpResponse(template.render(context, request))
     r.set_signed_cookie(key=os.environ['COUPONFINDER_COOKIE_KEY_LOCATION'], value=visitor_country_code, salt=os.environ['COUPONFINDER_SIGNED_COOKIE_SALT'],

@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http import JsonResponse
 from django.template import Template, context, loader
-from .models import Category, Organization, Offer, Flag
+from .models import Category, Organization, Offer, Country
 from django.core.paginator import Paginator
 import json, os, requests
 
@@ -51,32 +51,32 @@ def get_visitor_country(visitor_ip):
         if None == r.raise_for_status():
             output_json = json.loads(r.text)
             country_code = output_json['countryCode']
-            if country_code in Flag.target_country_codes:
+            if country_code in Country.target_country_codes:
                 return country_code
             else:
-                return Flag.default_country_code
+                return Country.default_country_code
         else:
             return "False"
     except:
         return "trace" 
 
 
-def get_country_flag(iso_country_code):
+def get_country(iso_country_code):
     """
-    Returns Flag object (from Models.py), corresponding to the supplied two-digi iso_country_code
+    Returns Country object (from Models.py), corresponding to the supplied two-digi iso_country_code
     ---------------------------------------------------------------------------------------------
     iso_country_code : str (two-digit iso code)
     """
     try:
-        f = Flag.objects.get(iso_country_code=iso_country_code)
+        f = Country.objects.get(iso_country_code=iso_country_code)
     except:
-        return Flag.objects.get(iso_country_code='ZZ')
+        return Country.objects.get(iso_country_code=Country.default_country_code)
     return f
 
 
 def get_location(request):
     """
-    Returns a cookie and a flag object, containing the Visitor's location.
+    Returns a cookie and a country object, containing the Visitor's location.
     If the Visitor requests a new location - Returns the Visitor's new location.
     
     If a Cookie does not exists, and the Visitor has not requested a new location / or if the Cookie has been tampered with - Returns the Visitor's IP based location
@@ -84,15 +84,15 @@ def get_location(request):
     try:
         visitor_country_code = request.get_signed_cookie(key=os.environ['COUPONFINDER_COOKIE_KEY_LOCATION'], salt=os.environ['COUPONFINDER_SIGNED_COOKIE_SALT'],
                                                          max_age=31536000)
-        flag = get_country_flag(visitor_country_code)
+        country = get_country(visitor_country_code)
 
         if "POST" == request.method:
             visitor_country_code = request.POST['location-choice']
-            flag = get_country_flag(visitor_country_code)
+            country = get_country(visitor_country_code)
     except:
         visitor_country_code = get_visitor_country(request.META['REMOTE_ADDR'])
-        flag = get_country_flag(visitor_country_code)
-    return {'visitor_country_code':visitor_country_code,'flag':flag}
+        country = get_country(visitor_country_code)
+    return {'visitor_country_code':visitor_country_code,'country':country}
 
 
 #############################################################################################
@@ -103,7 +103,7 @@ def get_location(request):
 #    footer_categories = get_footer_categories()                                            #
 #    addt_footer_categories = get_addt_footer_categories()                                  #
 #    visitor_country_code = get_visitor_country(request.META['REMOTE_ADDR'])                #
-#    flag = get_country_flag(visitor_country_code)                                          #
+#    country = get_country(visitor_country_code)                                          #
 #                                                                                           #
 # Becase base.html uses the data from these results                                         #
 #############################################################################################
@@ -113,11 +113,10 @@ def index(request):
     footer_categories = get_footer_categories()
     addt_footer_categories = get_addt_footer_categories()
     visitor_country_code = get_location(request)['visitor_country_code']
-    flag = get_location(request)['flag']
-    flags = Flag.objects.all()
+    country = get_location(request)['country']
+    countries = Country.objects.all()
 
     organizations = Organization.objects.all()
-    offers = Offer.objects.all()
 
     # TODO select the homepage offers based on impressions / conversion rates
 
@@ -125,25 +124,32 @@ def index(request):
     # Small Displays #
     ##################
     sm_fashion = Offer.objects.filter(
-        category=Category.objects.get(name="Fashion")).order_by('?')[0:4]
+        category=Category.objects.get(name="Fashion"),
+        country=Country.objects.get(iso_country_code=visitor_country_code)).order_by('?')[0:4]
 
     sm_travel = Offer.objects.filter(
-        category=Category.objects.get(name="Travel")).order_by('?')[0:4]
+        category=Category.objects.get(name="Travel"),
+        country=Country.objects.get(iso_country_code=visitor_country_code)).order_by('?')[0:4]
 
     sm_experiences = Offer.objects.filter(
-        category=Category.objects.get(name="Experiences")).order_by('?')[0:4]
+        category=Category.objects.get(name="Experiences"),
+        country=Country.objects.get(iso_country_code=visitor_country_code)).order_by('?')[0:4]
 
     sm_groceries = Offer.objects.filter(
-        category=Category.objects.get(name="Health")).order_by('?')[0:4]
+        category=Category.objects.get(name="Health"),
+        country=Country.objects.get(iso_country_code=visitor_country_code)).order_by('?')[0:4]
 
     sm_restaurants = Offer.objects.filter(
-        category=Category.objects.get(name="Restaurants")).order_by('?')[0:4]
+        category=Category.objects.get(name="Restaurants"),
+        country=Country.objects.get(iso_country_code=visitor_country_code)).order_by('?')[0:4]
 
     sm_sports = Offer.objects.filter(
-        category=Category.objects.get(name="Sports")).order_by('?')[0:4]
+        category=Category.objects.get(name="Sports"),
+        country=Country.objects.get(iso_country_code=visitor_country_code)).order_by('?')[0:4]
 
     sm_technology = Offer.objects.filter(
-        category=Category.objects.get(name="Technology")).order_by('?')[0:4]
+        category=Category.objects.get(name="Technology"),
+        country=Country.objects.get(iso_country_code=visitor_country_code)).order_by('?')[0:4]
     
     sm_offer_range = sm_fashion.union(
         sm_travel, sm_experiences, sm_groceries, sm_restaurants, sm_sports, sm_technology)
@@ -152,31 +158,38 @@ def index(request):
     # Large Displays #
     ##################
     lg_fashion = Offer.objects.filter(
-        category=Category.objects.get(name="Fashion")).order_by('?')[0:9]
+        category=Category.objects.get(name="Fashion"),
+        country=Country.objects.get(iso_country_code=visitor_country_code)).order_by('?')[0:9]
 
     lg_travel = Offer.objects.filter(
-        category=Category.objects.get(name="Travel")).order_by('?')[0:9]
+        category=Category.objects.get(name="Travel"),
+        country=Country.objects.get(iso_country_code=visitor_country_code)).order_by('?')[0:9]
 
     lg_experiences = Offer.objects.filter(
-        category=Category.objects.get(name="Experiences")).order_by('?')[0:9]
+        category=Category.objects.get(name="Experiences"),
+        country=Country.objects.get(iso_country_code=visitor_country_code)).order_by('?')[0:9]
 
     lg_groceries = Offer.objects.filter(
-        category=Category.objects.get(name="Health")).order_by('?')[0:9]
+        category=Category.objects.get(name="Health"),
+        country=Country.objects.get(iso_country_code=visitor_country_code)).order_by('?')[0:9]
 
     lg_restaurants = Offer.objects.filter(
-        category=Category.objects.get(name="Restaurants")).order_by('?')[0:9]
+        category=Category.objects.get(name="Restaurants"),
+        country=Country.objects.get(iso_country_code=visitor_country_code)).order_by('?')[0:9]
 
     lg_sports = Offer.objects.filter(
-        category=Category.objects.get(name="Sports")).order_by('?')[0:9]
+        category=Category.objects.get(name="Sports"),
+        country=Country.objects.get(iso_country_code=visitor_country_code)).order_by('?')[0:9]
 
     lg_technology = Offer.objects.filter(
-        category=Category.objects.get(name="Technology")).order_by('?')[0:9]
+        category=Category.objects.get(name="Technology"),
+        country=Country.objects.get(iso_country_code=visitor_country_code)).order_by('?')[0:9]
 
     lg_offer_range = lg_fashion.union(
         lg_travel, lg_experiences, lg_groceries, lg_restaurants, lg_sports, lg_technology)
 
-    context = {'categories': categories, 'organizations': organizations, 'offers': offers, 'current_visitor_country_code': visitor_country_code,
-               'current_flag': flag, 'flags': flags,
+    context = {'categories': categories, 'organizations': organizations, 'current_visitor_country_code': visitor_country_code,
+               'active_country': country, 'countries': countries, 'default_country_code': Country.default_country_code,
                'footer_categories': footer_categories, 'addt_footer_categories': addt_footer_categories,
                'sm_offer_range': sm_offer_range, 'lg_offer_range': lg_offer_range}
     template = loader.get_template('couponfinder/index.html')
@@ -191,19 +204,22 @@ def category(request, category_name_slug):
     footer_categories = get_footer_categories()
     addt_footer_categories = get_addt_footer_categories()
     visitor_country_code = get_location(request)['visitor_country_code']
-    flag = get_location(request)['flag']
-    flags = Flag.objects.all()
+    country = get_location(request)['country']
+    countries = Country.objects.all()
 
     page = request.GET.get("page",False)
     if page != False:
-        offers = Paginator(Offer.objects.filter(category=Category.objects.filter(slug=category_name_slug)[0]),15).page(page)
+        offers = Paginator(Offer.objects.filter(category=Category.objects.filter(slug=category_name_slug)[0],
+                                                country=Country.objects.get(iso_country_code=visitor_country_code)),15).page(page)
     else:
-        offers = Paginator(Offer.objects.filter(category=Category.objects.filter(slug=category_name_slug)[0]),15).page(1)
+        offers = Paginator(Offer.objects.filter(category=Category.objects.filter(slug=category_name_slug)[0],
+                                                country=Country.objects.get(iso_country_code=visitor_country_code)),15).page(1)
 
     category = Category.objects.filter(slug=category_name_slug)[0]
 
     context = {'categories': categories, 'footer_categories': footer_categories, 'addt_footer_categories': addt_footer_categories,
-               'offers': offers, 'category': category, 'current_visitor_country_code': visitor_country_code, 'current_flag': flag, 'flags': flags}
+               'offers': offers, 'category': category, 'current_visitor_country_code': visitor_country_code, 'active_country': country, 'countries': countries,
+               'default_country_code': Country.default_country_code}
     template = loader.get_template('couponfinder/category.html')
     r = HttpResponse(template.render(context, request))
     r.set_signed_cookie(key=os.environ['COUPONFINDER_COOKIE_KEY_LOCATION'], value=visitor_country_code, salt=os.environ['COUPONFINDER_SIGNED_COOKIE_SALT'],
@@ -214,8 +230,10 @@ def category(request, category_name_slug):
 def ajax_category(request, category_name_slug):
     page = request.GET.get("page",False)
     media = request.GET.get("media", False)
+    visitor_country_code = get_location(request)['visitor_country_code']
     if page != False:
-        offers = Paginator(Offer.objects.filter(category=Category.objects.filter(slug=category_name_slug)[0]),15).page(page)
+        offers = Paginator(Offer.objects.filter(category=Category.objects.filter(slug=category_name_slug)[0],
+                                                country=Country.objects.get(iso_country_code=visitor_country_code)),15).page(page)
 
     context = {'offers': offers}
 
@@ -232,16 +250,18 @@ def business(request, business_name_slug):
     footer_categories = get_footer_categories()
     addt_footer_categories = get_addt_footer_categories()
     visitor_country_code = get_location(request)['visitor_country_code']
-    flag = get_location(request)['flag']
-    flags = Flag.objects.all()
+    country = get_location(request)['country']
+    countries = Country.objects.all()
 
-    offers = Offer.objects.filter(organization=Organization.objects.get(slug=business_name_slug))
+    offers = Offer.objects.filter(organization=Organization.objects.get(slug=business_name_slug),
+                                  country=Country.objects.get(iso_country_code=visitor_country_code))
     
-    organization = Organization.objects.get(slug=business_name_slug)
+    organization = Organization.objects.get(slug=business_name_slug,
+                                            country=Country.objects.get(iso_country_code=visitor_country_code))
 
     context = {'categories': categories, 'footer_categories': footer_categories, 'addt_footer_categories': addt_footer_categories,
                'business_name_slug': business_name_slug, 'organization': organization, 'offers': offers, 'current_visitor_country_code': visitor_country_code,
-               'current_flag': flag, 'flags': flags}
+               'active_country': country, 'countries': countries, 'default_country_code': Country.default_country_code}
     template = loader.get_template('couponfinder/business.html')
     r = HttpResponse(template.render(context, request))
     r.set_signed_cookie(key=os.environ['COUPONFINDER_COOKIE_KEY_LOCATION'], value=visitor_country_code, salt=os.environ['COUPONFINDER_SIGNED_COOKIE_SALT'],
@@ -254,24 +274,27 @@ def search(request):
     footer_categories = get_footer_categories()
     addt_footer_categories = get_addt_footer_categories()
     visitor_country_code = get_location(request)['visitor_country_code']
-    flag = get_location(request)['flag']
-    flags = Flag.objects.all()
+    country = get_location(request)['country']
+    countries = Country.objects.all()
 
     search_term = request.GET['business_name'].strip()
     search_term_keywords = search_term.split(" ")
 
-    organizations = Organization.objects.filter(name__icontains=search_term)
+    organizations = Organization.objects.filter(name__icontains=search_term,
+                                                country=Country.objects.get(iso_country_code=visitor_country_code))
     if len(organizations) == 1:
         slug = organizations[0].slug
         target_url = "/couponfinder/business/" + slug + "/"
         return HttpResponseRedirect(target_url)
     elif len(organizations) <= 0:
         for keyword in search_term_keywords:
-            orgs = Organization.objects.filter(name__icontains=keyword)
+            orgs = Organization.objects.filter(name__icontains=keyword,
+                                               country=Country.objects.get(iso_country_code=visitor_country_code))
             organizations = organizations.union(orgs)
 
     context = {'categories': categories, 'footer_categories': footer_categories, 'addt_footer_categories': addt_footer_categories,
-               'search_term': search_term, 'organizations': organizations, 'current_visitor_country_code': visitor_country_code, 'current_flag': flag, 'flags': flags}
+               'search_term': search_term, 'organizations': organizations, 'current_visitor_country_code': visitor_country_code,
+               'active_country': country, 'countries': countries, 'default_country_code': Country.default_country_code}
     template = loader.get_template('couponfinder/results.html')
     r = HttpResponse(template.render(context, request))
     r.set_signed_cookie(key=os.environ['COUPONFINDER_COOKIE_KEY_LOCATION'], value=visitor_country_code, salt=os.environ['COUPONFINDER_SIGNED_COOKIE_SALT'],
@@ -283,10 +306,12 @@ def ajax_search(request):
     search_term = request.GET['term'].strip()
     search_term_keywords = search_term.split(" ")
 
-    organizations = Organization.objects.filter(name__icontains=search_term)
+    organizations = Organization.objects.filter(name__icontains=search_term,
+                                                country=Country.objects.get(iso_country_code=visitor_country_code))
     if len(organizations) <= 0:
         for keyword in search_term_keywords:
-            orgs = Organization.objects.filter(name__icontains=keyword)
+            orgs = Organization.objects.filter(name__icontains=keyword,
+                                               country=Country.objects.get(iso_country_code=visitor_country_code))
             organizations = organizations.union(orgs)
 
     output_dict = {}

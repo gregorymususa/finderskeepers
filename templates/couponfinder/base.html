@@ -29,7 +29,7 @@
       .couponfinder-md-typeahead-autocomplete{display: none;}
       .couponfinder-sm-navigation{display:none;}
       .couponfinder-sm-typeahead-autocomplete{display: none;}
-      .location-choice-desc-phones{display: none;}
+      .location-modal-choice-desc-phones{display: none;}
 
       .couponfinder-lg-navigation{display:flex;}
       .couponfinder-lg-sub-navigation{display:block;}
@@ -46,6 +46,7 @@
       .couponfinder-lg-typeahead-autocomplete{display: none;}
       .couponfinder-sm-navigation{display:none;}
       .couponfinder-sm-typeahead-autocomplete{display: none;}
+      .location-modal-choice-desc-phones{display: none;}
       
       .couponfinder-lg-location{display:block;}
       .flags{max-width:1.5rem;}
@@ -61,7 +62,7 @@
       .couponfinder-lg-location{display:none;}
       .couponfinder-md-navigation{display:none;}
       .couponfinder-md-typeahead-autocomplete{display: none;}
-      .location-choice-desc-large{display: none;}
+      .location-modal-choice-desc-large{display: none;}
 
       .couponfinder-sm-navigation{display:flex;}
       .couponfinder-sm-typeahead-autocomplete{display: flex;}
@@ -90,7 +91,7 @@
           <img src="http://yetanothersandbox.com/images/jina-inverted.png" style="width:8rem">
         </a>
         <a class="ml-auto text-white" href="#" data-toggle="modal" data-target="#location-modal">
-          <img class="flags" src="{% static current_flag.flag_filename %}">
+          <img class="flags" src="{% static active_country.flag %}">
         </a>
         <button class="navbar-toggler border-0" style="outline:none !important;" data-toggle="collapse" data-target="#my-navbar-collapse3">
           <i class="fas fa-search text-white"></i>
@@ -168,8 +169,8 @@
     <div class="bg-primary mx-auto pb-3 text-center text-white couponfinder-lg-location">
       <small>Viewing offers for location:</small>
       <a class="text-white" href="#" data-toggle="modal" data-target="#location-modal">
-        <img class="flags" src="{% static current_flag.flag_filename %}" />
-        <small>{{ current_flag.country }}</small>
+        <img class="flags" src="{% static active_country.flag %}" />
+        <small>{{ active_country.country }}</small>
       </a>
     </div>
     <div class="bg-primary couponfinder-lg-sub-navigation">
@@ -197,7 +198,7 @@
             </div>
 
             <div class="modal-body">
-              {% for f in flags %}
+              {% for country in countries %}
               
                 {% if forloop.counter0|divisibleby:"2" %}
                   <div class="form-row">
@@ -205,11 +206,16 @@
              
                 <div class="col">
                   <div class="form-check mb-3">
-                    <input class="form-check-input" type="radio" name="location-choice" id="location-{{ f.iso_country_code }}" value="{{ f.iso_country_code }}">
-                    <label class="form-check-label" for="location-{{ f.iso_country_code }}">
-                      <img class="flags" src="{% static f.flag_filename %}" />
-                      <span class="location-choice-desc-phones">{{ f.iso_country_code  }}</span>
-                      <span class="location-choice-desc-large">{{ f.country }}</span>
+                    <input class="form-check-input" type="radio" name="location-choice" id="location-{{ country.iso_country_code }}"
+                           value="{{ country.iso_country_code }}">
+                    <label class="form-check-label" for="location-{{ country.iso_country_code }}">
+                      <img class="flags" src="{% static country.flag %}" />
+                      {% if default_country_code != country.iso_country_code  %}
+                        <span class="location-modal-choice location-modal-choice-desc-phones">{{ country.iso_country_code  }}</span>
+                        <span class="location-modal-choice location-modal-choice-desc-large">{{ country.country }}</span>
+                      {% else %}
+                        <span class="location-modal-choice">{{ country.country }}</span>
+                      {% endif %}
                     </label>
                   </div>
                 </div>

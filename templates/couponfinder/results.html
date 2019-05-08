@@ -26,6 +26,10 @@
   </style>
 
   <!-- Mobiles, and Tablets -->
+  {% if alert %}
+    <div class="alert alert-danger couponfinder-sm-md-container" role="alert">{{ alert }}</div>
+  {% endif %}
+
   <h1 class="h2 mt-5 mb-0 pt-4 pr-2 pb-0 pl-3 bg-light text-primary couponfinder-sm-md-heading">
     Search Results
   </h1>
@@ -46,6 +50,11 @@
 
   <!-- Large Displays -->
   <div class="container couponfinder-lg-content">
+
+    {% if alert %}
+      <div class="alert alert-danger" role="alert">{{ alert }}</div>
+    {% endif %}
+
     <div class="couponfinder-lg-heading">
       <h1 class="h2 mt-5 mb-4 pl-2 text-primary">Search Results</h1>
     </div>

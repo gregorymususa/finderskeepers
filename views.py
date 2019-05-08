@@ -115,6 +115,10 @@ def index(request):
     visitor_country_code = get_location(request)['visitor_country_code']
     country = get_location(request)['country']
     countries = Country.objects.all()
+    
+    country_alert = False
+    if Country.default_country_code.lower() == visitor_country_code.lower():
+        country_alert = 'Apologies, we do not currently serve your region!'
 
     organizations = Organization.objects.all()
 
@@ -190,7 +194,7 @@ def index(request):
 
     context = {'categories': categories, 'organizations': organizations, 'current_visitor_country_code': visitor_country_code,
                'active_country': country, 'countries': countries, 'default_country_code': Country.default_country_code,
-               'footer_categories': footer_categories, 'addt_footer_categories': addt_footer_categories,
+               'footer_categories': footer_categories, 'addt_footer_categories': addt_footer_categories, 'alert': country_alert,
                'sm_offer_range': sm_offer_range, 'lg_offer_range': lg_offer_range}
     template = loader.get_template('couponfinder/index.html')
     r = HttpResponse(template.render(context, request))
@@ -206,6 +210,9 @@ def category(request, category_name_slug):
     visitor_country_code = get_location(request)['visitor_country_code']
     country = get_location(request)['country']
     countries = Country.objects.all()
+    country_alert = False
+    if Country.default_country_code.lower() == visitor_country_code.lower():
+        country_alert = 'Apologies, we do not currently serve your region!'
 
     page = request.GET.get("page",False)
     if page != False:
@@ -217,7 +224,7 @@ def category(request, category_name_slug):
 
     category = Category.objects.filter(slug=category_name_slug)[0]
 
-    context = {'categories': categories, 'footer_categories': footer_categories, 'addt_footer_categories': addt_footer_categories,
+    context = {'categories': categories, 'footer_categories': footer_categories, 'addt_footer_categories': addt_footer_categories, 'alert': country_alert,
                'offers': offers, 'category': category, 'current_visitor_country_code': visitor_country_code, 'active_country': country, 'countries': countries,
                'default_country_code': Country.default_country_code}
     template = loader.get_template('couponfinder/category.html')
@@ -252,6 +259,9 @@ def business(request, business_name_slug):
     visitor_country_code = get_location(request)['visitor_country_code']
     country = get_location(request)['country']
     countries = Country.objects.all()
+    country_alert = False
+    if Country.default_country_code.lower() == visitor_country_code.lower():
+        country_alert = 'Apologies, we do not currently serve your region!'
 
     offers = Offer.objects.filter(organization=Organization.objects.get(slug=business_name_slug),
                                   country=Country.objects.get(iso_country_code=visitor_country_code))
@@ -259,7 +269,7 @@ def business(request, business_name_slug):
     organization = Organization.objects.get(slug=business_name_slug,
                                             country=Country.objects.get(iso_country_code=visitor_country_code))
 
-    context = {'categories': categories, 'footer_categories': footer_categories, 'addt_footer_categories': addt_footer_categories,
+    context = {'categories': categories, 'footer_categories': footer_categories, 'addt_footer_categories': addt_footer_categories, 'alert': country_alert,
                'business_name_slug': business_name_slug, 'organization': organization, 'offers': offers, 'current_visitor_country_code': visitor_country_code,
                'active_country': country, 'countries': countries, 'default_country_code': Country.default_country_code}
     template = loader.get_template('couponfinder/business.html')
@@ -276,6 +286,9 @@ def search(request):
     visitor_country_code = get_location(request)['visitor_country_code']
     country = get_location(request)['country']
     countries = Country.objects.all()
+    country_alert = False
+    if Country.default_country_code.lower() == visitor_country_code.lower():
+        country_alert = 'Apologies, we do not currently serve your region!'
 
     search_term = request.GET['business_name'].strip()
     search_term_keywords = search_term.split(" ")
@@ -292,7 +305,7 @@ def search(request):
                                                country=Country.objects.get(iso_country_code=visitor_country_code))
             organizations = organizations.union(orgs)
 
-    context = {'categories': categories, 'footer_categories': footer_categories, 'addt_footer_categories': addt_footer_categories,
+    context = {'categories': categories, 'footer_categories': footer_categories, 'addt_footer_categories': addt_footer_categories, 'alert': country_alert,
                'search_term': search_term, 'organizations': organizations, 'current_visitor_country_code': visitor_country_code,
                'active_country': country, 'countries': countries, 'default_country_code': Country.default_country_code}
     template = loader.get_template('couponfinder/results.html')

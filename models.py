@@ -13,7 +13,7 @@ from django.db import models
 # Example: 2018-11-30T23:59:59Z
 
 class Country(models.Model):
-    target_country_codes = ('DE','FR','GB','NL','US','ZZ')
+    target_country_codes = ('GB','ZZ')
     default_country_code = 'ZZ'
     iso_country_code = models.SlugField('IsoCountryCode', max_length=2, primary_key=True)
     flag = models.URLField('FlagFilename', max_length=200, blank=True, null=True)

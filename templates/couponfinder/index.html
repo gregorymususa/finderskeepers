@@ -23,10 +23,16 @@
         padding-right:0px;}
     }
   </style>
+  
+  <!-- Mobiles, and Tablets -->
+  
+  {% if alert %}
+    <div class="alert alert-danger couponfinder-sm-md-container" role="alert">{{ alert }}</div>
+  {% endif %}
+  
   {% if categories %}
   {% for category in categories %}
 
-  <!-- Mobiles, and Tablets -->
   <h1 class="h2 mt-5 mb-0 pt-4 pr-2 pb-0 pl-3 bg-light text-primary couponfinder-sm-md-heading">
     <a class="text-primary" href="{% url 'category' category.name|lower %}">
     {{category.name}}
@@ -103,6 +109,11 @@
   <!--TODO: Give organizations appropriate background images (incl. changing Model). 
       Example: In Category Groceries, a Winery should have a different background image, to a Supermarket.-->
 <div class="container couponfinder-lg-content">
+
+  {% if alert %}
+    <div class="alert alert-danger" role="alert">{{ alert }}</div>
+  {% endif %}
+
   {% if categories %}
   {% for category in categories %}
     <div class="couponfinder-lg-heading">

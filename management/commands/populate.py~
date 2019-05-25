@@ -253,7 +253,7 @@ class WebCrawler():
             else:
                 offer_code = None
 
-            o_tuple = Organization.objects.get_or_create(name=org_name,country=country)
+            o_tuple = Organization.objects.get_or_create(name=org_name)
             if True == o_tuple[1]:#IF created, setup the Org.
                 o = o_tuple[0]
                 o.website = org_website

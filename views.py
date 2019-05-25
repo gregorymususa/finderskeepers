@@ -5,6 +5,7 @@ from django.template import Template, context, loader
 from .models import Category, Organization, Offer, Country
 from django.core.paginator import Paginator
 import json, os, requests
+from datetime import datetime, date
 
 # Query Set Reference:      https://docs.djangoproject.com/en/2.1/ref/models/querysets/
 
@@ -122,6 +123,8 @@ def index(request):
 
     organizations = Organization.objects.all()
 
+    now = datetime.utcnow()
+
     # TODO select the homepage offers based on impressions / conversion rates
 
     ##################
@@ -129,31 +132,38 @@ def index(request):
     ##################
     sm_fashion = Offer.objects.filter(
         category=Category.objects.get(name="Fashion"),
-        country=Country.objects.get(iso_country_code=visitor_country_code)).order_by('?')[0:4]
+        country=Country.objects.get(iso_country_code=visitor_country_code),
+        expiry_date__gt=now).order_by('?')[0:4]
 
     sm_travel = Offer.objects.filter(
         category=Category.objects.get(name="Travel"),
-        country=Country.objects.get(iso_country_code=visitor_country_code)).order_by('?')[0:4]
+        country=Country.objects.get(iso_country_code=visitor_country_code),
+        expiry_date__gt=now).order_by('?')[0:4]
 
     sm_experiences = Offer.objects.filter(
         category=Category.objects.get(name="Experiences"),
-        country=Country.objects.get(iso_country_code=visitor_country_code)).order_by('?')[0:4]
+        country=Country.objects.get(iso_country_code=visitor_country_code),
+        expiry_date__gt=now).order_by('?')[0:4]
 
     sm_groceries = Offer.objects.filter(
         category=Category.objects.get(name="Health"),
-        country=Country.objects.get(iso_country_code=visitor_country_code)).order_by('?')[0:4]
+        country=Country.objects.get(iso_country_code=visitor_country_code),
+        expiry_date__gt=now).order_by('?')[0:4]
 
     sm_restaurants = Offer.objects.filter(
         category=Category.objects.get(name="Restaurants"),
-        country=Country.objects.get(iso_country_code=visitor_country_code)).order_by('?')[0:4]
+        country=Country.objects.get(iso_country_code=visitor_country_code),
+        expiry_date__gt=now).order_by('?')[0:4]
 
     sm_sports = Offer.objects.filter(
         category=Category.objects.get(name="Sports"),
-        country=Country.objects.get(iso_country_code=visitor_country_code)).order_by('?')[0:4]
+        country=Country.objects.get(iso_country_code=visitor_country_code),
+        expiry_date__gt=now).order_by('?')[0:4]
 
     sm_technology = Offer.objects.filter(
         category=Category.objects.get(name="Technology"),
-        country=Country.objects.get(iso_country_code=visitor_country_code)).order_by('?')[0:4]
+        country=Country.objects.get(iso_country_code=visitor_country_code),
+        expiry_date__gt=now).order_by('?')[0:4]
     
     sm_offer_range = sm_fashion.union(
         sm_travel, sm_experiences, sm_groceries, sm_restaurants, sm_sports, sm_technology)
@@ -163,31 +173,38 @@ def index(request):
     ##################
     lg_fashion = Offer.objects.filter(
         category=Category.objects.get(name="Fashion"),
-        country=Country.objects.get(iso_country_code=visitor_country_code)).order_by('?')[0:9]
+        country=Country.objects.get(iso_country_code=visitor_country_code),
+        expiry_date__gt=now).order_by('?')[0:9]
 
     lg_travel = Offer.objects.filter(
         category=Category.objects.get(name="Travel"),
-        country=Country.objects.get(iso_country_code=visitor_country_code)).order_by('?')[0:9]
+        country=Country.objects.get(iso_country_code=visitor_country_code),
+        expiry_date__gt=now).order_by('?')[0:9]
 
     lg_experiences = Offer.objects.filter(
         category=Category.objects.get(name="Experiences"),
-        country=Country.objects.get(iso_country_code=visitor_country_code)).order_by('?')[0:9]
+        country=Country.objects.get(iso_country_code=visitor_country_code),
+        expiry_date__gt=now).order_by('?')[0:9]
 
     lg_groceries = Offer.objects.filter(
         category=Category.objects.get(name="Health"),
-        country=Country.objects.get(iso_country_code=visitor_country_code)).order_by('?')[0:9]
+        country=Country.objects.get(iso_country_code=visitor_country_code),
+        expiry_date__gt=now).order_by('?')[0:9]
 
     lg_restaurants = Offer.objects.filter(
         category=Category.objects.get(name="Restaurants"),
-        country=Country.objects.get(iso_country_code=visitor_country_code)).order_by('?')[0:9]
+        country=Country.objects.get(iso_country_code=visitor_country_code),
+        expiry_date__gt=now).order_by('?')[0:9]
 
     lg_sports = Offer.objects.filter(
         category=Category.objects.get(name="Sports"),
-        country=Country.objects.get(iso_country_code=visitor_country_code)).order_by('?')[0:9]
+        country=Country.objects.get(iso_country_code=visitor_country_code),
+        expiry_date__gt=now).order_by('?')[0:9]
 
     lg_technology = Offer.objects.filter(
         category=Category.objects.get(name="Technology"),
-        country=Country.objects.get(iso_country_code=visitor_country_code)).order_by('?')[0:9]
+        country=Country.objects.get(iso_country_code=visitor_country_code),
+        expiry_date__gt=now).order_by('?')[0:9]
 
     lg_offer_range = lg_fashion.union(
         lg_travel, lg_experiences, lg_groceries, lg_restaurants, lg_sports, lg_technology)

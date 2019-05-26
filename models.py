@@ -46,6 +46,7 @@ class Organization(models.Model):
     logo = models.URLField('Logo', max_length=200, blank=True)
     slug = models.SlugField('Slug', max_length=70, blank=True, null=True)
     category = models.ManyToManyField(Category)
+    exclude = models.BooleanField('Exclude', default=False)
 
     country = models.ForeignKey('Country', on_delete=models.CASCADE)
  

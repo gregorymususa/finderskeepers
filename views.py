@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http import JsonResponse
 from django.template import Template, context, loader
+from django.db.models import Q
 from .models import Category, Organization, Offer, Country
 from django.core.paginator import Paginator
 import json, os, requests
@@ -122,6 +123,7 @@ def index(request):
         country_alert = 'Apologies, we do not currently serve your region!'
 
     organizations = Organization.objects.all()
+    excluded_orgs = Organization.objects.filter(exclude=True)
 
     now = datetime.utcnow()
 
@@ -131,36 +133,43 @@ def index(request):
     # Small Displays #
     ##################
     sm_fashion = Offer.objects.filter(
+        ~Q(organization__in=excluded_orgs),
         category=Category.objects.get(name="Fashion"),
         country=Country.objects.get(iso_country_code=visitor_country_code),
         expiry_date__gt=now).order_by('?')[0:4]
 
     sm_travel = Offer.objects.filter(
+        ~Q(organization__in=excluded_orgs),
         category=Category.objects.get(name="Travel"),
         country=Country.objects.get(iso_country_code=visitor_country_code),
         expiry_date__gt=now).order_by('?')[0:4]
 
     sm_experiences = Offer.objects.filter(
+        ~Q(organization__in=excluded_orgs),
         category=Category.objects.get(name="Experiences"),
         country=Country.objects.get(iso_country_code=visitor_country_code),
         expiry_date__gt=now).order_by('?')[0:4]
 
     sm_groceries = Offer.objects.filter(
+        ~Q(organization__in=excluded_orgs),
         category=Category.objects.get(name="Health"),
         country=Country.objects.get(iso_country_code=visitor_country_code),
         expiry_date__gt=now).order_by('?')[0:4]
 
     sm_restaurants = Offer.objects.filter(
+        ~Q(organization__in=excluded_orgs),
         category=Category.objects.get(name="Restaurants"),
         country=Country.objects.get(iso_country_code=visitor_country_code),
         expiry_date__gt=now).order_by('?')[0:4]
 
     sm_sports = Offer.objects.filter(
+        ~Q(organization__in=excluded_orgs),
         category=Category.objects.get(name="Sports"),
         country=Country.objects.get(iso_country_code=visitor_country_code),
         expiry_date__gt=now).order_by('?')[0:4]
 
     sm_technology = Offer.objects.filter(
+        ~Q(organization__in=excluded_orgs),
         category=Category.objects.get(name="Technology"),
         country=Country.objects.get(iso_country_code=visitor_country_code),
         expiry_date__gt=now).order_by('?')[0:4]
@@ -172,36 +181,43 @@ def index(request):
     # Large Displays #
     ##################
     lg_fashion = Offer.objects.filter(
+        ~Q(organization__in=excluded_orgs),
         category=Category.objects.get(name="Fashion"),
         country=Country.objects.get(iso_country_code=visitor_country_code),
         expiry_date__gt=now).order_by('?')[0:9]
 
     lg_travel = Offer.objects.filter(
+        ~Q(organization__in=excluded_orgs),
         category=Category.objects.get(name="Travel"),
         country=Country.objects.get(iso_country_code=visitor_country_code),
         expiry_date__gt=now).order_by('?')[0:9]
 
     lg_experiences = Offer.objects.filter(
+        ~Q(organization__in=excluded_orgs),
         category=Category.objects.get(name="Experiences"),
         country=Country.objects.get(iso_country_code=visitor_country_code),
         expiry_date__gt=now).order_by('?')[0:9]
 
     lg_groceries = Offer.objects.filter(
+        ~Q(organization__in=excluded_orgs),
         category=Category.objects.get(name="Health"),
         country=Country.objects.get(iso_country_code=visitor_country_code),
         expiry_date__gt=now).order_by('?')[0:9]
 
     lg_restaurants = Offer.objects.filter(
+        ~Q(organization__in=excluded_orgs),
         category=Category.objects.get(name="Restaurants"),
         country=Country.objects.get(iso_country_code=visitor_country_code),
         expiry_date__gt=now).order_by('?')[0:9]
 
     lg_sports = Offer.objects.filter(
+        ~Q(organization__in=excluded_orgs),
         category=Category.objects.get(name="Sports"),
         country=Country.objects.get(iso_country_code=visitor_country_code),
         expiry_date__gt=now).order_by('?')[0:9]
 
     lg_technology = Offer.objects.filter(
+        ~Q(organization__in=excluded_orgs),
         category=Category.objects.get(name="Technology"),
         country=Country.objects.get(iso_country_code=visitor_country_code),
         expiry_date__gt=now).order_by('?')[0:9]
@@ -224,6 +240,8 @@ def category(request, category_name_slug):
     categories = get_all_categories()
     footer_categories = get_footer_categories()
     addt_footer_categories = get_addt_footer_categories()
+    excluded_orgs = Organization.objects.filter(exclude=True)
+
     visitor_country_code = get_location(request)['visitor_country_code']
     country = get_location(request)['country']
     countries = Country.objects.all()
@@ -233,10 +251,12 @@ def category(request, category_name_slug):
 
     page = request.GET.get("page",False)
     if page != False:
-        offers = Paginator(Offer.objects.filter(category=Category.objects.filter(slug=category_name_slug)[0],
+        offers = Paginator(Offer.objects.filter(~Q(organization__in=excluded_orgs),
+                                                category=Category.objects.filter(slug=category_name_slug)[0],
                                                 country=Country.objects.get(iso_country_code=visitor_country_code)),15).page(page)
     else:
-        offers = Paginator(Offer.objects.filter(category=Category.objects.filter(slug=category_name_slug)[0],
+        offers = Paginator(Offer.objects.filter(~Q(organization__in=excluded_orgs),
+                                                category=Category.objects.filter(slug=category_name_slug)[0],
                                                 country=Country.objects.get(iso_country_code=visitor_country_code)),15).page(1)
 
     category = Category.objects.filter(slug=category_name_slug)[0]
@@ -254,9 +274,13 @@ def category(request, category_name_slug):
 def ajax_category(request, category_name_slug):
     page = request.GET.get("page",False)
     media = request.GET.get("media", False)
+ 
+    excluded_orgs = Organization.objects.filter(exclude=True)
+
     visitor_country_code = get_location(request)['visitor_country_code']
     if page != False:
-        offers = Paginator(Offer.objects.filter(category=Category.objects.filter(slug=category_name_slug)[0],
+        offers = Paginator(Offer.objects.filter(~Q(organization__in=excluded_orgs),
+                                                category=Category.objects.filter(slug=category_name_slug)[0],
                                                 country=Country.objects.get(iso_country_code=visitor_country_code)),15).page(page)
 
     context = {'offers': offers}
@@ -280,12 +304,13 @@ def business(request, business_name_slug):
     if Country.default_country_code.lower() == visitor_country_code.lower():
         country_alert = 'Apologies, we do not currently serve your region!'
 
-    offers = Offer.objects.filter(organization=Organization.objects.get(slug=business_name_slug),
+    organization = Organization.objects.get(slug=business_name_slug,
+                                            country=Country.objects.get(iso_country_code=visitor_country_code),
+                                            exclude=False)
+
+    offers = Offer.objects.filter(organization=organization,
                                   country=Country.objects.get(iso_country_code=visitor_country_code))
     
-    organization = Organization.objects.get(slug=business_name_slug,
-                                            country=Country.objects.get(iso_country_code=visitor_country_code))
-
     context = {'categories': categories, 'footer_categories': footer_categories, 'addt_footer_categories': addt_footer_categories, 'alert': country_alert,
                'business_name_slug': business_name_slug, 'organization': organization, 'offers': offers, 'current_visitor_country_code': visitor_country_code,
                'active_country': country, 'countries': countries, 'default_country_code': Country.default_country_code}
@@ -311,7 +336,8 @@ def search(request):
     search_term_keywords = search_term.split(" ")
 
     organizations = Organization.objects.filter(name__icontains=search_term,
-                                                country=Country.objects.get(iso_country_code=visitor_country_code))
+                                                country=Country.objects.get(iso_country_code=visitor_country_code),
+                                                exclude=False)
     if len(organizations) == 1:
         slug = organizations[0].slug
         target_url = "/couponfinder/business/" + slug + "/"
@@ -319,7 +345,8 @@ def search(request):
     elif len(organizations) <= 0:
         for keyword in search_term_keywords:
             orgs = Organization.objects.filter(name__icontains=keyword,
-                                               country=Country.objects.get(iso_country_code=visitor_country_code))
+                                               country=Country.objects.get(iso_country_code=visitor_country_code),
+                                               exclude=False)
             organizations = organizations.union(orgs)
 
     context = {'categories': categories, 'footer_categories': footer_categories, 'addt_footer_categories': addt_footer_categories, 'alert': country_alert,
@@ -337,11 +364,13 @@ def ajax_search(request):
     search_term_keywords = search_term.split(" ")
 
     organizations = Organization.objects.filter(name__icontains=search_term,
-                                                country=Country.objects.get(iso_country_code=visitor_country_code))
+                                                country=Country.objects.get(iso_country_code=visitor_country_code),
+                                                exclude=False)
     if len(organizations) <= 0:
         for keyword in search_term_keywords:
             orgs = Organization.objects.filter(name__icontains=keyword,
-                                               country=Country.objects.get(iso_country_code=visitor_country_code))
+                                               country=Country.objects.get(iso_country_code=visitor_country_code),
+                                               exclude=False)
             organizations = organizations.union(orgs)
 
     output_dict = {}

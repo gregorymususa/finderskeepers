@@ -54,6 +54,21 @@ class WebCrawler():
             return True
         return False
 
+    def offer_code_is_none(self, cat_name, extid):
+        """
+          Returns True, if offer code is none. Otherwise, returns False.
+
+          The aim of this function, is to correct Offer Codes, that get saved as None (e.g. due to a change in the structure of the data source).
+          Fixing the way the data is obtained here, allows for overwriting of those cases.
+          
+          cat_name Category Name
+          extid External Offer  ID
+        """
+        if (Offer.labels[0][1] == Offer.objects.get(category=Category.objects.get(name=cat_name),external_id=extid).label) and (None == Offer.objects.get(category=Category.objects.get(name=cat_name),external_id=extid).code):
+            return True
+        else:
+            return False
+
     def requests_get_coupon_code(self, extID, cat_name):
         builtin_time.sleep(randint(45, 60))
         headers = self.get_headers()
@@ -205,16 +220,15 @@ class WebCrawler():
         if False == r:
             raise ValueError("Category could not be found!")
         soup = bs4.BeautifulSoup(r.text, "html.parser")
-        offer_code_spans = soup.select('span.c-code__text')
-        if 0 < len(offer_code_spans):
-            return offer_code_spans[0].get_text().strip()
+        offer_code_inputs = soup.select('input.c-code__text')
+        if 0 < len(offer_code_inputs):
+            return offer_code_inputs[0].get_attribute_list('value')[0].strip()
         else:
             print("Could not find Offer Code, for External ID %s (%s)" %
                   (extid, cat_name))
             return None
 
     def crawl(self, category, country):
-        print(country)#TRACE
         """
         Starts the script, with the following mandatory parameter:
         category  - "Fashion", "Travel", "Experiences", "Restaurants", "Technology", "Health", "Sports"
@@ -236,6 +250,12 @@ class WebCrawler():
 
             offer_external_id = self.getExternalOfferID(li)
             if self.offer_exists(category,offer_external_id):
+                if self.offer_code_is_none(category,offer_external_id):
+                    offer_code = self.getOfferCode(offer_external_id,category)
+                    offer_to_replace = Offer.objects.get(category=Category.objects.get(name=category),external_id=offer_external_id)
+                    offer_to_replace.code = offer_code
+                    offer_to_replace.save()
+                    print('Replace Offer Code, for offer',offer_external_id)
                 continue#skip processing, if already exists
 
             org_name = self.getOrgName(li)
@@ -299,8 +319,6 @@ class Command(BaseCommand):
         # Need to practice python Classes. Writing and calling them.
         # What happens if the Classes are in the same .py file / what happens if I have to import them, what does it take / what file structure does it take
         crawler = WebCrawler()
-        print(options['country'][0])#TRACE
-        print(Country.objects.get(iso_country_code=options['country'][0]))#TRACE
         crawler.crawl(options['category'][0],Country.objects.get(iso_country_code=options['country'][0]))
 
         # We might need to write the MAIN logic in here, and define the helper functions, elsewhere in the class -- makes it easier to use the Query Set API

@@ -281,14 +281,11 @@ def ajax_category(request, category_name_slug):
  
     excluded_orgs = Organization.objects.filter(exclude=True)
 
-    now = datetime.utcnow()
-
     visitor_country_code = get_location(request)['visitor_country_code']
     if page != False:
         offers = Paginator(Offer.objects.filter(~Q(organization__in=excluded_orgs),
                                                 category=Category.objects.filter(slug=category_name_slug)[0],
-                                                country=Country.objects.get(iso_country_code=visitor_country_code),
-                                                expiry_date__gt=now),15).page(page)
+                                                country=Country.objects.get(iso_country_code=visitor_country_code)),15).page(page)
 
     context = {'offers': offers}
 
@@ -311,15 +308,12 @@ def business(request, business_name_slug):
     if Country.default_country_code.lower() == visitor_country_code.lower():
         country_alert = 'Apologies, we do not currently serve your region!'
 
-    now = datetime.utcnow()
-
     organization = Organization.objects.get(slug=business_name_slug,
                                             country=Country.objects.get(iso_country_code=visitor_country_code),
                                             exclude=False)
 
     offers = Offer.objects.filter(organization=organization,
-                                  country=Country.objects.get(iso_country_code=visitor_country_code),
-                                  expiry_date__gt=now)
+                                  country=Country.objects.get(iso_country_code=visitor_country_code))
     
     context = {'categories': categories, 'footer_categories': footer_categories, 'addt_footer_categories': addt_footer_categories, 'alert': country_alert,
                'business_name_slug': business_name_slug, 'organization': organization, 'offers': offers, 'current_visitor_country_code': visitor_country_code,

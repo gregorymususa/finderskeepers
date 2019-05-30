@@ -134,7 +134,7 @@
               <div class="col-12">
                 <div class="card-title font-weight-bold mb-4">{{ offer.description }} at {{ offer.organization.name }}</div>
                 <div class="card-text">
-                  {% if "Offer Code" == offer.label %}
+                  {% if "Offer Code" == offer.label and None != offer.code %}
                     <p class="bg-primary text-white py-1"><strong>{{ offer.code }}</strong></p>
                   {% endif %}
                   <a class="text-primary d-inline-block w-100 mb-2" href="{{offer.affiliate_link}}"><small>Visit site & get promotion</small></a>

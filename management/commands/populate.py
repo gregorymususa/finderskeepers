@@ -254,13 +254,13 @@ class WebCrawler():
                 offer_code = None
 
             o_tuple = Organization.objects.get_or_create(name=org_name,country=country)
-            if True == o_tuple[1]:#IF created, setup the Org.
+            if True == o_tuple[1]:#IF created for the first time THEN setup the Org.
                 o = o_tuple[0]
                 o.website = org_website
                 o.slug = org_slug
                 o.save()
                 o.category.add(c)
-            else:#ELSE update the Org.
+            else:#ELSE IF already existed THEN update the Org.
                 o = o_tuple[0]
                 if "http://example.com".lower() == o.website.lower():
                     o.website = org_website

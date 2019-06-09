@@ -372,6 +372,7 @@ def search(request):
 def ajax_search(request):
     search_term = request.GET['term'].strip()
     search_term_keywords = search_term.split(" ")
+    visitor_country_code = get_location(request)['visitor_country_code']
 
     organizations = Organization.objects.filter(name__icontains=search_term,
                                                 country=Country.objects.get(iso_country_code=visitor_country_code),

@@ -3,10 +3,12 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.http import JsonResponse
 from django.template import Template, context, loader
 from django.db.models import Q
-from .models import Category, Organization, Offer, Country
 from django.core.paginator import Paginator
+from .models import Category, Organization, Offer, Country
+
 import json, os, requests
 from datetime import datetime, date
+import ast
 
 # Query Set Reference:      https://docs.djangoproject.com/en/2.1/ref/models/querysets/
 
@@ -96,6 +98,20 @@ def get_location(request):
         country = get_country(visitor_country_code)
     return {'visitor_country_code':visitor_country_code,'country':country}
 
+
+def save_signed_cookie(request, response, consent_mode, key, value, secure_cookie=True, http_only=True, max_age=31536000):
+    try:
+        original_string = request.COOKIES['CookieConsent']
+        string_dict = original_string.replace("%2C",",'").replace(":","':").replace("{","{'").replace("true","True").replace("false","False")
+        cookie_consent = ast.literal_eval(string_dict)
+        
+        if cookie_consent[consent_mode]:
+            response.set_signed_cookie(key=key, value=value, salt=os.environ['COUPONFINDER_SIGNED_COOKIE_SALT'],
+                                       secure=secure_cookie, httponly=http_only, max_age=max_age, domain='discount-ted.com', path='/')
+        return True
+    except:
+        # set necessary cookies only; user has not accepted cookies
+        return False
 
 #############################################################################################
 # Output Functions                                                                          #
@@ -231,8 +247,7 @@ def index(request):
                'sm_offer_range': sm_offer_range, 'lg_offer_range': lg_offer_range}
     template = loader.get_template('couponfinder/index.html')
     r = HttpResponse(template.render(context, request))
-    r.set_signed_cookie(key=os.environ['COUPONFINDER_COOKIE_KEY_LOCATION'], value=visitor_country_code, salt=os.environ['COUPONFINDER_SIGNED_COOKIE_SALT'],
-                        secure=True, httponly=True, max_age=31536000, domain='discount-ted.com', path='/')
+    save_signed_cookie(request, r, 'preferences', os.environ['COUPONFINDER_COOKIE_KEY_LOCATION'], visitor_country_code)
     return r
 
 
@@ -270,8 +285,7 @@ def category(request, category_name_slug):
                'default_country_code': Country.default_country_code}
     template = loader.get_template('couponfinder/category.html')
     r = HttpResponse(template.render(context, request))
-    r.set_signed_cookie(key=os.environ['COUPONFINDER_COOKIE_KEY_LOCATION'], value=visitor_country_code, salt=os.environ['COUPONFINDER_SIGNED_COOKIE_SALT'],
-                        secure=True, httponly=True, max_age=31536000, domain='discount-ted.com', path='/')
+    save_signed_cookie(request, r, 'preferences', os.environ['COUPONFINDER_COOKIE_KEY_LOCATION'], visitor_country_code)
     return r
 
 
@@ -326,8 +340,7 @@ def business(request, business_name_slug):
                'active_country': country, 'countries': countries, 'default_country_code': Country.default_country_code}
     template = loader.get_template('couponfinder/business.html')
     r = HttpResponse(template.render(context, request))
-    r.set_signed_cookie(key=os.environ['COUPONFINDER_COOKIE_KEY_LOCATION'], value=visitor_country_code, salt=os.environ['COUPONFINDER_SIGNED_COOKIE_SALT'],
-                        secure=True, httponly=True, max_age=31536000, domain='discount-ted.com', path='/')
+    save_signed_cookie(request, r, 'preferences', os.environ['COUPONFINDER_COOKIE_KEY_LOCATION'], visitor_country_code)
     return r
 
 
@@ -364,8 +377,7 @@ def search(request):
                'active_country': country, 'countries': countries, 'default_country_code': Country.default_country_code}
     template = loader.get_template('couponfinder/results.html')
     r = HttpResponse(template.render(context, request))
-    r.set_signed_cookie(key=os.environ['COUPONFINDER_COOKIE_KEY_LOCATION'], value=visitor_country_code, salt=os.environ['COUPONFINDER_SIGNED_COOKIE_SALT'],
-                        secure=True, httponly=True, max_age=31536000, domain='discount-ted.com', path='/')
+    save_signed_cookie(request, r, 'preferences', os.environ['COUPONFINDER_COOKIE_KEY_LOCATION'], visitor_country_code)
     return r
 
 

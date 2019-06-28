@@ -254,7 +254,7 @@
       </div>
     </div>
     
-    <div class="modal fade" id="couponfinder_tsandcs_modal" tab-index="-1" role="dialog">
+    <div class="modal fade" id="couponfinder_tsandcs" tab-index="-1" role="dialog">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -410,6 +410,10 @@
     });
   </script>
   <script>
+    var appname = "couponfinder";
+    var path = "ajax_search/";
+    var ajax_terms_url = "/" + appname + "/" + path;
+
     function load_tsandcs() {
       $('#couponfinder_tsandcs_modal-body').text('TRACE');
     }

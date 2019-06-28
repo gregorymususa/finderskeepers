@@ -404,6 +404,17 @@ def ajax_search(request):
     return JsonResponse(output_dict)
 
 
+def ajax_tsandcs(request):
+    offer_id = request.GET['terms_id'].strip()
+    offer = Offer.objects.get(id=offer_id)
+    terms = offer.terms
+
+    if "" == terms:
+        terms = "Terms and Conditions not provided by " + offer.organization.name
+    
+    return JsonResponse({int(offer_id):terms})
+
+
 def logo(request):
     try:
         with open(get_file_path("templates/couponfinder/img/white_logo_transparent2.png"), 'rb') as fd:

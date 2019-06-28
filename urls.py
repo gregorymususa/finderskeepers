@@ -15,4 +15,5 @@ urlpatterns = [
     path('fashion-icon/', views.fashion_icon, name='fashion-icon'),
     path('bootstrap-css/', views.bootstrap_css, name="bootstrap-css"),
     path('couponfinder-css/', views.couponfinder_css, name="couponfinder-css"),
+    path('ajax_tsandcs/', views.ajax_tsandcs, name="ajax_tsandcs"),
 ]

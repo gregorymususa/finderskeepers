@@ -83,7 +83,9 @@
             </span>
             <span class="float-right">
               <i class="fas fa-gavel"></i>
-              Ts and Cs
+              <button type="button" class="btn btn-link p-0 text-dark" style="font-size:0.75rem" data-toggle="modal" data-target="#couponfinder_tsandcs_modal" id="couponfinder_tsandcs_trigger">
+                Ts and Cs
+              </button>
             </span>
           </div>
         </div>
@@ -109,7 +111,6 @@
   <!--TODO: Give organizations appropriate background images (incl. changing Model). 
       Example: In Category Groceries, a Winery should have a different background image, to a Supermarket.-->
 <div class="container couponfinder-lg-content">
-
   {% if alert %}
     <div class="alert alert-danger" role="alert">{{ alert }}</div>
   {% endif %}
@@ -134,7 +135,7 @@
               <div class="col-12">
                 <div class="card-title font-weight-bold mb-4">{{ offer.description }} at {{ offer.organization.name }}</div>
                 <div class="card-text">
-                  {% if "Offer Code" == offer.label and None != offer.code %}
+                  {% if "Offer Code" == offer.label %}
                     <p class="bg-primary text-white py-1"><strong>{{ offer.code }}</strong></p>
                   {% endif %}
                   <a class="text-primary d-inline-block w-100 mb-2" href="{{offer.affiliate_link}}"><small>Visit site & get promotion</small></a>
@@ -154,7 +155,9 @@
             </span>
             <span class="float-right">
               <i class="fas fa-gavel"></i>
-              Ts and Cs
+              <button type="button" class="btn btn-link p-0 text-dark" style="font-size:0.75rem" data-toggle="modal" data-target="#couponfinder_tsandcs">
+                Ts and Cs
+              </button>
             </span>
           </div>
         </div>

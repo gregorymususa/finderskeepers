@@ -2,6 +2,9 @@
 <html lang="en">
 {% load static %}
 <head>
+  <!-- Cookiebot: Enable consent banner -->
+  <script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="9664948e-9139-424b-9e16-4ebe103fb8d3" type="text/javascript" async></script>
+
   <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-141658847-1"></script>
   <script>
@@ -11,6 +14,7 @@
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
+  
         gtag('config', 'UA-141658847-1');
       }
     }
@@ -95,7 +99,6 @@
 </head>
 
 <body class="bg-light">
-
   <header>
     <!-- Phones-->
     <nav class="navbar navbar-expand-md fixed-top navbar-dark bg-primary couponfinder_dropshadow couponfinder-sm-navigation" style="border-bottom:3px solid #FF6600">
@@ -249,7 +252,28 @@
           </form>
         </div>
       </div>
-    </div>    
+    </div>
+    
+    <div class="modal fade" id="couponfinder_tsandcs_modal" tab-index="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Terms and Conditions</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p id="couponfinder_tsandcs_modal-body">Terms and Conditions</p> 
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">
+              Close
+            </button> 
+          </div>
+        </div>
+      </div>
+    </div>
 
   </header>
 
@@ -383,6 +407,14 @@
       else {
         couponfinder_nextpage+=1
       }
+    });
+  </script>
+  <script>
+    function load_tsandcs() {
+      $('Trace').text( $('#couponfinder_tsandcs_modal-body') );
+    }
+    $('button.couponfinder_tsandcs_trigger').click(function(){
+      load_tsandcs();
     });
   </script>
 

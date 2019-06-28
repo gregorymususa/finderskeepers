@@ -254,7 +254,7 @@
       </div>
     </div>
     
-    <div class="modal fade" id="couponfinder_tsandcs" tab-index="-1" role="dialog">
+    <div class="modal fade" id="couponfinder_tsandcs_modal" tab-index="-1" role="dialog">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -264,7 +264,7 @@
             </button>
           </div>
           <div class="modal-body">
-            <p>Terms and Conditions</p> 
+            <p id="couponfinder_tsandcs_modal-body">Terms and Conditions</p> 
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-primary" data-dismiss="modal">
@@ -407,6 +407,14 @@
       else {
         couponfinder_nextpage+=1
       }
+    });
+  </script>
+  <script>
+    function load_tsandcs() {
+      $('#couponfinder_tsandcs_modal-body').text('TRACE');
+    }
+    $('button.couponfinder_tsandcs_trigger').click(function(){
+      load_tsandcs();
     });
   </script>
 

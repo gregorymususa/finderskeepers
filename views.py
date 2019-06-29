@@ -113,6 +113,12 @@ def save_signed_cookie(request, response, consent_mode, key, value, secure_cooki
         # set necessary cookies only; user has not accepted cookies
         return False
 
+
+def diff(list1, list2):
+    list2 = set(list2)
+    return [list3 for list3 in list1 if list3 not in list2]
+
+
 #############################################################################################
 # Output Functions                                                                          #
 #                                                                                           #
@@ -395,12 +401,21 @@ def ajax_search(request):
                                                country=Country.objects.get(iso_country_code=visitor_country_code),
                                                exclude=False)
             organizations = organizations.union(orgs)
+    
+    # remove organizations that have no valid offers    
+    orgs_with_no_offers = []
+
+    for o in organizations:
+        if 0 == len(Offer.objects.filter(organization=o, expiry_date__gt=datetime.utcnow())):
+            orgs_with_no_offers.append(o)
+
+    result = diff(list(organizations),orgs_with_no_offers)
 
     output_dict = {}
-    for counter,org_name_dict in enumerate(organizations.values('name')):
-        org_name = org_name_dict['name']
+    for counter, org in enumerate(result):  
+        org_name = org.name
         output_dict[counter] = org_name
-    
+ 
     return JsonResponse(output_dict)
 
 

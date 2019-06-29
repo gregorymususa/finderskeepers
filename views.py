@@ -410,7 +410,7 @@ def ajax_tsandcs(request):
     terms = offer.terms
 
     if "" == terms:
-        terms = "Terms and Conditions not provided by " + offer.organization.name
+        terms = "Terms and conditions of " + offer.organization.name + " apply."
     
     return JsonResponse({"terms":terms})
 

@@ -423,7 +423,11 @@
       terms_array = terms.split(/(?=•)/g);
       
       if(1 >= terms_array.length){
-        terms_array = terms.split(/(?=\d+?\.)/g)
+        terms_array = terms.split(/(?=-)/g);
+      }
+
+      if(1 >= terms_array.length){
+        terms_array = terms.split(/\d+?\./g);
       }
 
       t = "";

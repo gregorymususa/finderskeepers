@@ -259,15 +259,15 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">Terms and Conditions</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <button type="button" class="close couponfinder_tsandcs_close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body">
-            <p id="couponfinder_tsandcs_modal-body">Terms and Conditions</p> 
+            <p id="couponfinder_tsandcs_modal-body"></p> 
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-primary" data-dismiss="modal">
+            <button type="button" class="btn btn-primary couponfinder_tsandcs_close" data-dismiss="modal">
               Close
             </button> 
           </div>
@@ -411,14 +411,41 @@
   </script>
   <script>
     var appname = "couponfinder";
-    var path = "ajax_search/";
+    var path = "ajax_tsandcs/";
     var ajax_terms_url = "/" + appname + "/" + path;
 
-    function load_tsandcs() {
-      $('#couponfinder_tsandcs_modal-body').text('TRACE');
+    function format(terms){
+      //Did a string.split(//) using regex i.e.  /[regex here]/
+      //The 'g' modifier find all matches rather than stopping after the first match
+      //Used special lookahead (?=)
+      //  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#special-lookahead
+      
+      terms_array = terms.split(/(?=•)/g);
+      
+      if(1 >= terms_array.length){
+        terms_array = terms.split(/(?=\d+?\.)/g)
+      }
+
+      t = "";
+      terms_array.forEach(function(element){
+        t = t + element + '<br /><br />';
+      });
+
+      return t;
     }
-    $('button.couponfinder_tsandcs_trigger').click(function(){
-      load_tsandcs();
+
+    function load_tsandcs(terms) {
+      $('#couponfinder_tsandcs_modal-body').html(format(terms.terms));
+    }
+
+    $('button.couponfinder_tsandcs_trigger').click(function(event){
+      target_id = event.target.id
+      target_id = target_id.substring(target_id.lastIndexOf("_")+1)
+      jQuery.get(ajax_terms_url,{terms_id: target_id},function(terms){load_tsandcs(terms);},"json")
+    });
+
+    $('button.couponfinder_tsandcs_close').click(function(){
+      $('#couponfinder_tsandcs_modal-body').html("");
     });
   </script>
 

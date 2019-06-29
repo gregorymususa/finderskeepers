@@ -412,7 +412,7 @@ def ajax_tsandcs(request):
     if "" == terms:
         terms = "Terms and Conditions not provided by " + offer.organization.name
     
-    return JsonResponse({int(offer_id):terms})
+    return JsonResponse({"terms":terms})
 
 
 def logo(request):

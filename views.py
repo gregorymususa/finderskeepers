@@ -377,6 +377,13 @@ def search(request):
                                                country=Country.objects.get(iso_country_code=visitor_country_code),
                                                exclude=False)
             organizations = organizations.union(orgs)
+    
+    #Fix: [#64] Search Autocomplete: Do not list companies, which have no valid offers
+    organizations_copy = organizations.all()
+    
+    for o in organizations_copy:
+        if 0 == len(Offer.objects.filter(organization=o, expiry_date__gt=datetime.utcnow())):
+            organizations = organizations.filter(~Q(name=o.name))
 
     context = {'categories': categories, 'footer_categories': footer_categories, 'addt_footer_categories': addt_footer_categories, 'alert': country_alert,
                'search_term': search_term, 'organizations': organizations, 'current_visitor_country_code': visitor_country_code,
@@ -402,7 +409,7 @@ def ajax_search(request):
                                                exclude=False)
             organizations = organizations.union(orgs)
     
-    # remove organizations that have no valid offers    
+    #Fix: [#64] Search Autocomplete: Do not list companies, which have no valid offers
     orgs_with_no_offers = []
 
     for o in organizations:

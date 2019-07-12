@@ -436,59 +436,22 @@ def ajax_tsandcs(request):
     
     return JsonResponse({"terms":terms})
 
-
-def logo(request):
-    try:
-        with open(get_file_path("templates/couponfinder/img/white_logo_transparent2.png"), 'rb') as fd:
-            return HttpResponse(fd.read(), content_type="image/png")
-    except:
-        return HttpResponse('No Image Found!')
+def privacy(request):
+    context = {}
+    template = loader.get_template('couponfinder/privacy.html')
+    r = HttpResponse(template.render(context, request))
+    return r
 
 
-def travel_icon(request):
-    try:
-        with open(get_file_path("templates/couponfinder/category_icons/world.png"), "rb") as f:
-            return HttpResponse(f.read(), content_type="image/jpeg")
-    except IOError:
-        return HttpResponse('No Image Found!')
+def terms(request):
+    context = {}
+    template = loader.get_template('couponfinder/terms.html')
+    r = HttpResponse(template.render(context, request))
+    return r
 
 
-def experiences_icon(request):
-    try:
-        with open(get_file_path("templates/couponfinder/category_icons/hot-air-balloon.png"), "rb") as f:
-            return HttpResponse(f.read(), content_type="image/jpeg")
-    except IOError:
-        return HttpResponse('No Image Found!')
 
-
-def fashion_icon(request):
-    try:
-        with open(get_file_path("templates/couponfinder/category_icons/fashion.png"), "rb") as f:
-            return HttpResponse(f.read(), content_type="image/jpeg")
-    except IOError:
-        return HttpResponse('No Image Found!')
-
-
-def bootstrap_css(request):
-    try:
-        with open(get_file_path("templates/couponfinder/css/bootstrap.css"), "rt") as f:
-            return HttpResponse(f.read(), content_type="text/css")
-    except IOError:
-        return HttpResponse('bootstrap.css not found!')
-
-
-def couponfinder_css(request):
-    try:
-        with open(get_file_path("templates/couponfinder/css/couponfinder.css"), "rt") as f:
-            return HttpResponse(f.read(), content_type="text/css")
-    except IOError:
-        return HttpResponse('couponfinder.css not found!')
-
-
-# Organization Logos #
-# TODO change all file loading functions, to use an overloaded load_file function #
-# TODO During go-live: change the file paths, in this file — to point to the files, on the server #
-
+#Utility Functions#
 def load_file(file_location):
     try:
         with open(file_location, "rb") as f:
@@ -497,6 +460,3 @@ def load_file(file_location):
         return HttpResponse('No Image Found!')
 
 
-def couponfinder_org_Thomas_Cook(request):
-    return load_file(
-        'F:\LearnPython\mysite3\couponfinder\\templates\couponfinder\organization_logos\Thomas_Cook.png')

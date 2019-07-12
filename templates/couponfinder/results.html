@@ -59,7 +59,7 @@
       <h1 class="h2 mt-5 mb-4 pl-2 text-primary">Search Results</h1>
     </div>
     {% if organizations %}
-      <ul class="list-group list-group-flush">
+      <ul class="list-group list-group-flush" style="padding-bottom:4rem;">
         {% for organization in organizations %}
           <li class="list-group-item border-0 my-1 couponfinder-search-result-item">
             {% if '' != organization.logo %}
@@ -70,6 +70,14 @@
         {% endfor %}
       </ul>
     {% endif %}
+
+    <div class="col-12 text-center text-dark" style="margin-top: 1rem;">
+      <small>
+        <a href="#" class="text-dark" style="white-space: pre;">Privacy Policy </a> 
+        | 
+        <a href="#" class="text-dark" style="white-space: pre;"> Terms and Conditions</a>
+      </small>
+    </div>
   </div>
 
 {% endblock %}

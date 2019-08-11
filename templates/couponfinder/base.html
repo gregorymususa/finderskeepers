@@ -283,12 +283,10 @@
     {% block main %}
     {% endblock %}
     
-    <div class="container couponfinder-lg-content">
+    <div class="container couponfinder-lg-content couponfinder-legal-information">
       <div class="col-12 text-center text-dark" style="padding-top: 1rem;">
         <small>
-          <a href="{% url 'legal' %}" class="text-dark" style="white-space: pre;">Legal</a> 
-          | 
-          <a href="/couponfinder/terms/" class="text-dark" style="white-space: pre;"> Terms and Conditions</a>
+          <a href="{% url 'legal' %}" class="text-dark" style="white-space: pre;">Legal Information</a> 
         </small>
       </div>
     </div>
@@ -333,11 +331,9 @@
         {% endif %}
       </div>
     </div>
-    <div class="container couponfinder-sm-md-content bg-dark mt-1 pt-1 pb-1">
+    <div class="container bg-dark mt-1 pt-1 pb-1 couponfinder-sm-md-content couponfinder-legal-information">
       <div class="col-12 text-center text-white">
-        <a href="{% url 'legal' %}" class="text-white" style="white-space: pre;">Legal</a> 
-        | 
-        <a href="/couponfinder/terms/" class="text-white" style="white-space: pre;"> Terms and Conditions</a>
+        <a href="{% url 'legal' %}" class="text-white" style="white-space: pre;">Legal Information</a> 
       </div>
     </div>
   </footer>

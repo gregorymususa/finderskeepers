@@ -456,27 +456,6 @@ def privacy(request):
     return r
 
 
-def terms(request):
-    categories = get_all_categories()
-    footer_categories = get_footer_categories()
-    addt_footer_categories = get_addt_footer_categories()
-    visitor_country_code = get_location(request)['visitor_country_code']
-    country = get_location(request)['country']
-    countries = Country.objects.all()
-    country_alert = False
-    if Country.default_country_code.lower() == visitor_country_code.lower():
-        country_alert = 'Apologies, we do not currently serve your region!'
-     
-    context = {'categories': categories, 'footer_categories': footer_categories, 'addt_footer_categories': addt_footer_categories, 
-               'alert': country_alert,'current_visitor_country_code': visitor_country_code,'active_country': country, 'countries': countries, 
-               'default_country_code': Country.default_country_code}
-    template = loader.get_template('couponfinder/terms.html')
-    r = HttpResponse(template.render(context, request))
-    save_signed_cookie(request, r, 'preferences', os.environ['COUPONFINDER_COOKIE_KEY_LOCATION'], visitor_country_code)
-    return r
-
-
-
 def legal(request):
     categories = get_all_categories()
     footer_categories = get_footer_categories()

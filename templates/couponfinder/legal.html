@@ -1,0 +1,127 @@
+{% extends 'couponfinder/base.html' %}
+{% block main %}
+  <style type="text/css">
+    /* Large Displays */
+    @media (min-width: 991px) {
+      .couponfinder-lg-heading, .couponfinder-lg-content {display:block;}
+      .couponfinder-sm-md-heading, .couponfinder-sm-md-container {display:none;}
+    }
+
+    /* Medium Displays */
+    @media (min-width: 767px) and (max-width: 991px) {
+      .couponfinder-lg-heading, .couponfinder-lg-content {display:none;}
+      .couponfinder-sm-md-heading, .couponfinder-sm-md-container {display:block;}
+    }
+
+    /* Small Displays */
+    @media (max-width: 767px) {
+      .couponfinder-lg-heading, .couponfinder-lg-content {display:none;}
+      .couponfinder-sm-md-heading, .couponfinder-sm-md-container {display:block;}
+    }
+
+    .couponfinder-legal-content {
+      white-space: pre-line;
+    }
+  </style>
+
+  <!-- Mobiles, and Tablets -->
+  {% if alert %}
+    <div class="alert alert-danger couponfinder-sm-md-container" role="alert">{{ alert }}</div>
+  {% endif %}
+
+  <h1 class="h2 mt-5 mb-4 pt-4 pr-2 pb-0 pl-3 bg-light text-primary couponfinder-sm-md-heading">
+    Legal
+  </h1>
+
+  <div class="container couponfinder-sm-md-container">
+    <ul class="nav nav-pills nav-fill flex-column">
+      <li class="nav-item">
+        <a class="nav-link active" data-toggle="pill" href="#couponfinder-sm-md-privacy">Privacy Policy</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-toggle="pill" href="#couponfinder-sm-md-terms">Terms and Conditions</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-toggle="pill" href="#couponfinder-sm-md-cookie">Cookie Policy</a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="container pt-4 mb-2 couponfinder-sm-md-container">
+    <div class="tab-content bg-white p-2">
+      <div class="tab-pane active" id="couponfinder-sm-md-privacy" role="tabpanel">
+        <h2 class="h3">Privacy Policy</h2>
+        <p class="couponfinder-legal-content"></p>
+      </div>
+      <div class="tab-pane" id="couponfinder-sm-md-terms" role="tabpanel">
+        <h2 class="h3">Terms and Conditions</h2>
+        <p class="couponfinder-legal-content"></p>
+      </div>
+      <div class="tab-pane" id="couponfinder-sm-md-cookie" role="tabpanel">
+        <h2 class="h3">Cookie Policy</h2>
+        <p class="couponfinder-legal-content">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vitae condimentum massa. Aenean eu lacus non turpis pretium cursus. In bibendum arcu eu luctus congue.
+          
+          Nulla dignissim erat ut sollicitudin eleifend. Phasellus pellentesque tellus eget augue consectetur pulvinar. Nunc est magna, consectetur eget lacinia eget, hendrerit ut nisl. Sed risus magna, iaculis sed varius ornare, suscipit ac magna.
+          
+          Duis ex arcu, porta quis velit non, gravida ultrices ligula. Nulla sodales ultricies velit imperdiet commodo. Nunc at ipsum nec ipsum rhoncus luctus a eu erat. Pellentesque non nibh tellus. Fusce rutrum, turpis tincidunt scelerisque eleifend, lacus magna fermentum est, et dapibus tellus ex sit amet ipsum.
+          
+          Sed viverra, purus vel lacinia laoreet, nulla erat scelerisque lacus, non dapibus tellus enim sit amet risus. Cras id orci vitae lacus euismod porttitor. 
+          
+          Suspendisse nisi dui, consequat nec nisi a, gravida tempus sapien. Interdum et malesuada fames ac ante ipsum primis in faucibus.
+        </p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Large Displays -->
+  <div class="container couponfinder-lg-content">
+
+    {% if alert %}
+      <div class="alert alert-danger" role="alert">{{ alert }}</div>
+    {% endif %}
+
+    <div class="couponfinder-lg-heading">
+      <h1 class="h2 mt-5 mb-4 pl-2 text-primary">Legal</h1>
+    </div>
+    
+    <ul class="nav nav-pills nav-fill">
+      <li class="nav-item">
+        <a class="nav-link active" data-toggle="pill" href="#couponfinder-lg-privacy">Privacy Policy</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-toggle="pill" href="#couponfinder-lg-terms">Terms and Conditions</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-toggle="pill" href="#couponfinder-lg-cookie">Cookie Policy</a>
+      </li>
+    </ul>
+
+    <div class="tab-content bg-white mt-4 p-2">
+      <div class="tab-pane active" id="couponfinder-lg-privacy" role="tabpanel">
+        <h2 class="h3">Privacy Policy</h2>
+        <p class="couponfinder-legal-content"></p>
+      </div>
+      <div class="tab-pane" id="couponfinder-lg-terms" role="tabpanel">
+        <h2 class="h3">Terms and Conditions</h2>
+        <p class="couponfinder-legal-content"></p>
+      </div>
+      <div class="tab-pane" id="couponfinder-lg-cookie" role="tabpanel">
+        <h2 class="h3">Cookie Policy</h2>
+        <p class="couponfinder-legal-content">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vitae condimentum massa. Aenean eu lacus non turpis pretium cursus. In bibendum arcu eu luctus congue.
+          
+          Nulla dignissim erat ut sollicitudin eleifend. Phasellus pellentesque tellus eget augue consectetur pulvinar. Nunc est magna, consectetur eget lacinia eget, hendrerit ut nisl. Sed risus magna, iaculis sed varius ornare, suscipit ac magna.
+          
+          Duis ex arcu, porta quis velit non, gravida ultrices ligula. Nulla sodales ultricies velit imperdiet commodo. Nunc at ipsum nec ipsum rhoncus luctus a eu erat. Pellentesque non nibh tellus. Fusce rutrum, turpis tincidunt scelerisque eleifend, lacus magna fermentum est, et dapibus tellus ex sit amet ipsum.
+          
+          Sed viverra, purus vel lacinia laoreet, nulla erat scelerisque lacus, non dapibus tellus enim sit amet risus. Cras id orci vitae lacus euismod porttitor. 
+          
+          Suspendisse nisi dui, consequat nec nisi a, gravida tempus sapien. Interdum et malesuada fames ac ante ipsum primis in faucibus.
+        </p>
+      </div>
+    </div>
+
+  </div>
+{% endblock %}

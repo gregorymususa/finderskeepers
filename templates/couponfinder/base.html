@@ -54,6 +54,7 @@
       .couponfinder-lg-typeahead-autocomplete{display: flex;}
       .couponfinder-lg-location{display:block;}
       .flags{max-width:1.5rem;}
+      main{margin-top: 1rem; padding-bottom: 1.5rem;}
       footer{display: none;} /*As soon as lg-sub-navigation is displayed, the footer should disappear*/
     }
 
@@ -70,6 +71,7 @@
       .flags{max-width:1.5rem;}
       .couponfinder-md-navigation{display:flex;}
       .couponfinder-md-typeahead-autocomplete{display: flex;}
+      main{margin-top: 1rem; padding-bottom: 7rem;}
     }
 
     /* Small Displays (0px <= d < 767px) */
@@ -85,13 +87,13 @@
       .couponfinder-sm-navigation{display:flex;}
       .couponfinder-sm-typeahead-autocomplete{display: flex;}
       .flags{max-width:1.5rem;}
-      main{margin-top:6rem !important;}
+      main{margin-top: 6rem; padding-bottom: 7rem;}
     }
 
-    main {
-      margin-top: 1rem;
-      padding-bottom: 1.5rem;
-    }
+    .nav-link.active{background:#FF6600 !important;}
+    .nav-link{color:#FF6600;}
+    .nav-link:hover{color:#080808;}
+
   </style>
 
   <meta name="theme-color" content="#FF6600" />
@@ -280,9 +282,19 @@
   <main>
     {% block main %}
     {% endblock %}
+    
+    <div class="container couponfinder-lg-content">
+      <div class="col-12 text-center text-dark" style="padding-top: 1rem;">
+        <small>
+          <a href="{% url 'legal' %}" class="text-dark" style="white-space: pre;">Legal</a> 
+          | 
+          <a href="/couponfinder/terms/" class="text-dark" style="white-space: pre;"> Terms and Conditions</a>
+        </small>
+      </div>
+    </div>
   </main>
 
-  <footer class="fixed-bottom bg-primary text-white" style="box-shadow:0px -5px 5px -5px #333; border-top:3px solid #FF6600; padding-bottom:5px;">
+  <footer class="fixed-bottom bg-primary text-white" style="box-shadow:0px -5px 5px -5px #333; border-top:3px solid #FF6600;">
     <div class="container">
       <div class="row">
         {% if footer_categories %}
@@ -319,6 +331,13 @@
         <div class="col-3 p-1 text-center"><a href="{% url 'category' category.name|lower %}"><i class="fas {{category.icon}} fa-2x text-white"></i></a></div>
         {% endfor %}
         {% endif %}
+      </div>
+    </div>
+    <div class="container couponfinder-sm-md-content bg-dark mt-1 pt-1 pb-1">
+      <div class="col-12 text-center text-white">
+        <a href="{% url 'legal' %}" class="text-white" style="white-space: pre;">Legal</a> 
+        | 
+        <a href="/couponfinder/terms/" class="text-white" style="white-space: pre;"> Terms and Conditions</a>
       </div>
     </div>
   </footer>

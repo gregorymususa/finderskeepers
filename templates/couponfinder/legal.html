@@ -20,7 +20,7 @@
     }
 
     .couponfinder-legal-content {
-      white-space: pre-line;
+      white-space: pre-wrap;
     }
     .couponfinder-legal-information {
       display: none !important;
@@ -54,21 +54,21 @@
     <div class="tab-content bg-white p-2">
       <div class="tab-pane active" id="couponfinder-sm-md-privacy" role="tabpanel">
         <h2 class="h3">Privacy Policy</h2>
-        <p class="couponfinder-legal-content">
+        <div class="couponfinder-legal-content">
           {% include "couponfinder/privacy.html" %}
-        </p>
+        </div>
       </div>
       <div class="tab-pane" id="couponfinder-sm-md-terms" role="tabpanel">
         <h2 class="h3">Terms and Conditions</h2>
-        <p class="couponfinder-legal-content">
+        <div class="couponfinder-legal-content">
           {% include "couponfinder/terms_conditions.html" %}
-        </p>
+        </div>
       </div>
       <div class="tab-pane" id="couponfinder-sm-md-cookie" role="tabpanel">
         <h2 class="h3">Cookie Policy</h2>
-        <p class="couponfinder-legal-content">
+        <div class="couponfinder-legal-content">
           {% include "couponfinder/cookie_policy.html" %}
-        </p>
+        </div>
       </div>
     </div>
   </div>
@@ -100,21 +100,21 @@
     <div class="tab-content bg-white mt-4 p-2">
       <div class="tab-pane active" id="couponfinder-lg-privacy" role="tabpanel">
         <h2 class="h3">Privacy Policy</h2>
-        <p class="couponfinder-legal-content">
+        <div class="couponfinder-legal-content">
           {% include "couponfinder/privacy.html" %}
-        </p>
+        </div>
       </div>
       <div class="tab-pane" id="couponfinder-lg-terms" role="tabpanel">
-        <h2 class="h3">Terms and Conditions</h2>
-        <p class="couponfinder-legal-content">
+        <h2 class="h3">Terms and Conditions ("Terms")</h2>
+        <div class="couponfinder-legal-content">
           {% include "couponfinder/terms_conditions.html" %}
-        </p>
+        </div>
       </div>
       <div class="tab-pane" id="couponfinder-lg-cookie" role="tabpanel">
         <h2 class="h3">Cookie Policy</h2>
-        <p class="couponfinder-legal-content">
+        <div class="couponfinder-legal-content">
           {% include "couponfinder/cookie_policy.html" %}
-        </p>
+        </div>
       </div>
     </div>
 

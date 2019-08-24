@@ -64,7 +64,8 @@
                     {% if "Offer Code" == offer.label %}
                       <p class="bg-primary text-white py-2"><strong>{{ offer.code }}</strong></p>
                     {% endif %}
-                    <a class="text-primary d-inline-block w-100 mb-2" href="{{offer.affiliate_link}}">Visit site & get promotion</a>
+                    <!-- <a class="text-primary d-inline-block w-100 mb-2" href="{{offer.affiliate_link}}">Visit site & get promotion</a> -->
+                    <a class="text-primary d-inline-block w-100 mb-2" href="{{offer.organization.website}}">Visit site & get promotion</a>
                     <a class="text-primary d-inline-block w-100" href="{% url 'business' offer.organization.slug %}">See all from {{ offer.organization.name }}</a>
                   </div>
                 </div>
@@ -138,7 +139,8 @@
                   {% if "Offer Code" == offer.label %}
                     <p class="bg-primary text-white py-1"><strong>{{ offer.code }}</strong></p>
                   {% endif %}
-                  <a class="text-primary d-inline-block w-100 mb-2" href="{{offer.affiliate_link}}"><small>Visit site & get promotion</small></a>
+                  <!-- <a class="text-primary d-inline-block w-100 mb-2" href="{{offer.affiliate_link}}"><small>Visit site & get promotion</small></a> -->
+                  <a class="text-primary d-inline-block w-100 mb-2" href="{{offer.organization.website}}"><small>Visit site & get promotion</small></a>
                   <a class="text-primary d-inline-block w-100" href="{% url 'business' offer.organization.slug %}"><small>See all from {{ offer.organization.name }}</small></a>
                 </div>
               </div>

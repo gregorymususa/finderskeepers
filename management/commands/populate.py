@@ -9,6 +9,7 @@ import re
 from datetime import datetime, date, time, timedelta
 from random import randint
 import time as builtin_time
+import csv
 
 
 class WebCrawler():
@@ -298,27 +299,48 @@ class WebCrawler():
 
         return True
 
+class AwinLoader():
+
+    def download(self):
+        r = requests.get('https://ui.awin.com/export-promotions/636515/7f0f2cc60cbb3bee7689ed080545c2df?downloadType=csv&promotionType=&categoryIds=329,330,333,335,336,338&regionIds=1&advertiserIds=&membershipStatus=&promotionStatus=active')
+        try:
+            r.raise_for_status()
+        except:
+            print(r.status_code, '\nGoodbye!')
+        
+        with open(file='/var/tmp/promotions.csv',mode='wt',encoding='utf_8') as file_writer:
+            file_writer.write(r.text)
+     
+    def read_csv(self,f,mode,encoding):
+        with open(file=f,mode=mode,encoding=encoding) as csv_file:
+            csv_reader = csv.DictReader(f=csv_file)
+            for row in csv_reader:
+                print(row['Type'],row['Promotion ID'], row["Code"])
+     
+    def load(self, category, country):
+        #self.download()
+        #keys: "Promotion ID","Advertiser","Advertiser ID","Type","Code","Description","Starts","Ends","Categories","Regions","Terms","Deeplink Tracking","Deeplink","Commission Groups","Commission","Exclusive","Date Added","Title"
+        self.read_csv(f='/var/tmp/promotions.csv',mode='rt',encoding='utf_8')
+        print('Success')
+
 
 class Command(BaseCommand):
     help = 'args method | category'
 
     def add_arguments(self, parser):
-        parser.add_argument('method', nargs=1, choices=['crawler', 'provider'])
+        parser.add_argument('method', nargs=1, choices=['crawler', 'awin'])
         parser.add_argument('category', nargs=1, choices=[
                             'experiences', 'fashion', 'health', 'restaurants', 'sports', 'technology', 'travel'])
         parser.add_argument('country', nargs=1, choices=list(Country.target_country_codes))
 
     def handle(self, *args, **options):
         # handle the command
-        # Add a Class WebCrawler - then call Class.main(category)
-        # Add a Class WebCrawler, and import - then call Class.main(category)
-        #
-        # IF method == Crawler  - then call WebCrawler.main(category)
-        # IF method == Provider - then call Provider.main(category)
-        #
-        # Need to practice python Classes. Writing and calling them.
-        # What happens if the Classes are in the same .py file / what happens if I have to import them, what does it take / what file structure does it take
-        crawler = WebCrawler()
-        crawler.crawl(options['category'][0],Country.objects.get(iso_country_code=options['country'][0]))
-
+        
+        if "crawler" == options['method'][0].lower():
+            crawler = WebCrawler()
+            crawler.crawl(options['category'][0],Country.objects.get(iso_country_code=options['country'][0]))
+        elif "awin" == options['method'][0].lower():
+            awin_loader = AwinLoader()
+            awin_loader.load(options['category'][0],Country.objects.get(iso_country_code=options['country'][0]))
+        
         # We might need to write the MAIN logic in here, and define the helper functions, elsewhere in the class -- makes it easier to use the Query Set API

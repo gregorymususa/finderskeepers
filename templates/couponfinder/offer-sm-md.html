@@ -15,13 +15,18 @@
               {% endif %}
             </div>
             <div class="col-12">
-              <div class="card-title text-center font-weight-bold">{{ offer.description }} at {{ offer.organization.name }}</div>
+              <div class="card-title text-center font-weight-bold">{{ offer.title }} at {{ offer.organization.name }}</div>
               <div class="card-text text-center">
                 {% if "Offer Code" == offer.label %}
                   <p class="bg-primary text-white py-2"><strong>{{ offer.code }}</strong></p>
                 {% endif %}
-                <!-- <a class="text-primary d-inline-block w-100 mb-2" href="{{offer.affiliate_link}}">Visit site & get promotion</a> -->
-                <a class="text-primary d-inline-block w-100 mb-2" href="{{offer.organization.website}}">Visit site & get promotion</a>
+
+                {% if offer.organization.program_joined %}
+                  <a class="text-primary d-inline-block w-100 mb-2" href="{{offer.affiliate_link}}">Visit site & get promotion</a>
+                {% else %}
+                  <a class="text-primary d-inline-block w-100 mb-2" href="{{offer.link}}">Visit site & get promotion</a>
+                {% endif %}
+
                 <a class="text-primary d-inline-block w-100 couponfinder-card-business-link" href="{% url 'business' offer.organization.slug %}">See all from {{ offer.organization.name }}</a>
               </div>
             </div>

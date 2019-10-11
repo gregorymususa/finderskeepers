@@ -27,6 +27,18 @@ def get_file_path(relative_path):
     file_path = os.path.join(curr_dir,rel_path)
     return file_path
 
+def write_to_file(filename, content):
+    """
+    Writes content to a file; the file is in directory /var/tmp
+    -----------------------------------------------------------
+    Parameters
+        filename : str
+            e.g. variable_value.txt
+        content : str
+            e.g. 'the value of a variable, that is being investigated'
+    """
+    with open(file='/var/tmp/'+filename,mode='wt',encoding='utf_8') as file_writer:
+        file_writer.write(content)
 
 def get_all_categories():
     return Category.objects.order_by('manual_rank')
@@ -55,10 +67,7 @@ def get_visitor_country(visitor_ip):
         if None == r.raise_for_status():
             output_json = json.loads(r.text)
             country_code = output_json['countryCode']
-            if country_code in Country.target_country_codes:
-                return country_code
-            else:
-                return Country.default_country_code
+            return country_code
         else:
             return "False"
     except:
@@ -86,31 +95,42 @@ def get_location(request):
     If a Cookie does not exists, and the Visitor has not requested a new location / or if the Cookie has been tampered with - Returns the Visitor's IP based location
     """
     try:
-        visitor_country_code = request.get_signed_cookie(key=os.environ['COUPONFINDER_COOKIE_KEY_LOCATION'], salt=os.environ['COUPONFINDER_SIGNED_COOKIE_SALT'],
-                                                         max_age=31536000)
-        country = get_country(visitor_country_code)
-
         if "POST" == request.method:
             visitor_country_code = request.POST['location-choice']
+            country = get_country(visitor_country_code)
+        else:
+            visitor_country_code = request.get_signed_cookie(key=os.environ['COUPONFINDER_COOKIE_KEY_LOCATION'], salt=os.environ['COUPONFINDER_SIGNED_COOKIE_SALT'],
+                                                             max_age=31536000)
             country = get_country(visitor_country_code)
     except:
         visitor_country_code = get_visitor_country(request.META['REMOTE_ADDR'])
         country = get_country(visitor_country_code)
-    return {'visitor_country_code':visitor_country_code,'country':country}
+
+    if visitor_country_code in Country.target_country_codes:
+        return {'visitor_country_code':visitor_country_code,'country':country}
+    else:
+        visitor_country_code = Country.default_country_code
+        country = get_country(visitor_country_code)
+        return {'visitor_country_code':visitor_country_code,'country':country}
 
 
 def save_signed_cookie(request, response, consent_mode, key, value, secure_cookie=True, http_only=True, max_age=31536000):
-    try:
-        original_string = request.COOKIES['CookieConsent']
-        string_dict = original_string.replace("%2C",",'").replace(":","':").replace("{","{'").replace("true","True").replace("false","False")
-        cookie_consent = ast.literal_eval(string_dict)
-        
-        if cookie_consent[consent_mode]:
-            response.set_signed_cookie(key=key, value=value, salt=os.environ['COUPONFINDER_SIGNED_COOKIE_SALT'],
-                                       secure=secure_cookie, httponly=http_only, max_age=max_age, domain='discount-ted.com', path='/')
-        return True
-    except:
-        # set necessary cookies only; user has not accepted cookies
+    allowed_consent_modes = ('preferences','statistics','marketing')
+    
+    if consent_mode in allowed_consent_modes:
+        try:
+            original_string = request.COOKIES['CookieConsent']
+            string_dict = original_string.replace("%2C",",'").replace(":","':").replace("{","{'").replace("true","True").replace("false","False")
+            cookie_consent = ast.literal_eval(string_dict)
+            
+            if cookie_consent[consent_mode]:
+                response.set_signed_cookie(key=key, value=value, salt=os.environ['COUPONFINDER_SIGNED_COOKIE_SALT'],
+                                           secure=secure_cookie, httponly=http_only, max_age=max_age, domain='discount-ted.com', path='/')
+            return True
+        except:
+            # set necessary cookies only; user has not accepted cookies
+            return False
+    else:
         return False
 
 
@@ -126,26 +146,30 @@ def diff(list1, list2):
 #    categories = get_all_categories()                                                      #
 #    footer_categories = get_footer_categories()                                            #
 #    addt_footer_categories = get_addt_footer_categories()                                  #
-#    visitor_country_code = get_visitor_country(request.META['REMOTE_ADDR'])                #
-#    country = get_country(visitor_country_code)                                          #
+#    location = get_location(request)                                                       #
+#    visitor_country_code = location['visitor_country_code']                                #
+#    country = location['country']                                                          #
+#    countries = Country.objects.filter(iso_country_code__in = Country.target_country_codes)#
 #                                                                                           #
-# Becase base.html uses the data from these results                                         #
+# Because base.html uses the data from these results                                        #
 #############################################################################################
 
 def index(request):
     categories = get_all_categories()
     footer_categories = get_footer_categories()
     addt_footer_categories = get_addt_footer_categories()
-    visitor_country_code = get_location(request)['visitor_country_code']
-    country = get_location(request)['country']
-    countries = Country.objects.all()
+    location = get_location(request)
+    visitor_country_code = location['visitor_country_code']
+    country = location['country']
+    countries = Country.objects.filter(iso_country_code__in = Country.target_country_codes)
     
     country_alert = False
     if Country.default_country_code.lower() == visitor_country_code.lower():
+        write_to_file('variable_peek.txt',visitor_country_code.lower())
         country_alert = 'Apologies, we do not currently serve your region!'
 
     organizations = Organization.objects.all()
-    excluded_orgs = Organization.objects.filter(exclude=True)
+    excluded_orgs = Organization.objects.filter(exclude=True, country=Country.objects.get(iso_country_code=visitor_country_code))
 
     now = datetime.utcnow()
 
@@ -158,46 +182,53 @@ def index(request):
         ~Q(organization__in=excluded_orgs),
         category=Category.objects.get(name="Fashion"),
         country=Country.objects.get(iso_country_code=visitor_country_code),
+        organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
         expiry_date__gt=now).order_by('?')[0:4]
 
     sm_travel = Offer.objects.filter(
         ~Q(organization__in=excluded_orgs),
         category=Category.objects.get(name="Travel"),
         country=Country.objects.get(iso_country_code=visitor_country_code),
+        organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
         expiry_date__gt=now).order_by('?')[0:4]
 
     sm_experiences = Offer.objects.filter(
         ~Q(organization__in=excluded_orgs),
         category=Category.objects.get(name="Experiences"),
         country=Country.objects.get(iso_country_code=visitor_country_code),
+        organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
         expiry_date__gt=now).order_by('?')[0:4]
 
     sm_groceries = Offer.objects.filter(
         ~Q(organization__in=excluded_orgs),
         category=Category.objects.get(name="Health"),
         country=Country.objects.get(iso_country_code=visitor_country_code),
+        organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
         expiry_date__gt=now).order_by('?')[0:4]
 
-    sm_restaurants = Offer.objects.filter(
+    sm_food_drink = Offer.objects.filter(
         ~Q(organization__in=excluded_orgs),
-        category=Category.objects.get(name="Restaurants"),
+        category=Category.objects.get(name="Food & Drink"),
         country=Country.objects.get(iso_country_code=visitor_country_code),
+        organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
         expiry_date__gt=now).order_by('?')[0:4]
 
     sm_sports = Offer.objects.filter(
         ~Q(organization__in=excluded_orgs),
         category=Category.objects.get(name="Sports"),
         country=Country.objects.get(iso_country_code=visitor_country_code),
+        organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
         expiry_date__gt=now).order_by('?')[0:4]
 
     sm_technology = Offer.objects.filter(
         ~Q(organization__in=excluded_orgs),
         category=Category.objects.get(name="Technology"),
         country=Country.objects.get(iso_country_code=visitor_country_code),
+        organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
         expiry_date__gt=now).order_by('?')[0:4]
     
     sm_offer_range = sm_fashion.union(
-        sm_travel, sm_experiences, sm_groceries, sm_restaurants, sm_sports, sm_technology)
+        sm_travel, sm_experiences, sm_groceries, sm_food_drink, sm_sports, sm_technology)
 
     ##################
     # Large Displays #
@@ -206,46 +237,53 @@ def index(request):
         ~Q(organization__in=excluded_orgs),
         category=Category.objects.get(name="Fashion"),
         country=Country.objects.get(iso_country_code=visitor_country_code),
+        organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
         expiry_date__gt=now).order_by('?')[0:9]
 
     lg_travel = Offer.objects.filter(
         ~Q(organization__in=excluded_orgs),
         category=Category.objects.get(name="Travel"),
         country=Country.objects.get(iso_country_code=visitor_country_code),
+        organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
         expiry_date__gt=now).order_by('?')[0:9]
 
     lg_experiences = Offer.objects.filter(
         ~Q(organization__in=excluded_orgs),
         category=Category.objects.get(name="Experiences"),
         country=Country.objects.get(iso_country_code=visitor_country_code),
+        organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
         expiry_date__gt=now).order_by('?')[0:9]
 
     lg_groceries = Offer.objects.filter(
         ~Q(organization__in=excluded_orgs),
         category=Category.objects.get(name="Health"),
         country=Country.objects.get(iso_country_code=visitor_country_code),
+        organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
         expiry_date__gt=now).order_by('?')[0:9]
 
-    lg_restaurants = Offer.objects.filter(
+    lg_food_drink = Offer.objects.filter(
         ~Q(organization__in=excluded_orgs),
-        category=Category.objects.get(name="Restaurants"),
+        category=Category.objects.get(name="Food & Drink"),
         country=Country.objects.get(iso_country_code=visitor_country_code),
+        organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
         expiry_date__gt=now).order_by('?')[0:9]
 
     lg_sports = Offer.objects.filter(
         ~Q(organization__in=excluded_orgs),
         category=Category.objects.get(name="Sports"),
         country=Country.objects.get(iso_country_code=visitor_country_code),
+        organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
         expiry_date__gt=now).order_by('?')[0:9]
 
     lg_technology = Offer.objects.filter(
         ~Q(organization__in=excluded_orgs),
         category=Category.objects.get(name="Technology"),
         country=Country.objects.get(iso_country_code=visitor_country_code),
+        organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
         expiry_date__gt=now).order_by('?')[0:9]
 
     lg_offer_range = lg_fashion.union(
-        lg_travel, lg_experiences, lg_groceries, lg_restaurants, lg_sports, lg_technology)
+        lg_travel, lg_experiences, lg_groceries, lg_food_drink, lg_sports, lg_technology)
 
     context = {'categories': categories, 'organizations': organizations, 'current_visitor_country_code': visitor_country_code,
                'active_country': country, 'countries': countries, 'default_country_code': Country.default_country_code,
@@ -261,11 +299,12 @@ def category(request, category_name_slug):
     categories = get_all_categories()
     footer_categories = get_footer_categories()
     addt_footer_categories = get_addt_footer_categories()
-    excluded_orgs = Organization.objects.filter(exclude=True)
+    location = get_location(request)
+    visitor_country_code = location['visitor_country_code']
+    excluded_orgs = Organization.objects.filter(exclude=True, country=Country.objects.get(iso_country_code=visitor_country_code))
 
-    visitor_country_code = get_location(request)['visitor_country_code']
-    country = get_location(request)['country']
-    countries = Country.objects.all()
+    country = location['country']
+    countries = Country.objects.filter(iso_country_code__in = Country.target_country_codes)
     country_alert = False
     if Country.default_country_code.lower() == visitor_country_code.lower():
         country_alert = 'Apologies, we do not currently serve your region!'
@@ -277,11 +316,13 @@ def category(request, category_name_slug):
         offers = Paginator(Offer.objects.filter(~Q(organization__in=excluded_orgs),
                                                 category=Category.objects.filter(slug=category_name_slug)[0],
                                                 country=Country.objects.get(iso_country_code=visitor_country_code),
+                                                organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
                                                 expiry_date__gt=now),15).page(page)
     else:
         offers = Paginator(Offer.objects.filter(~Q(organization__in=excluded_orgs),
                                                 category=Category.objects.filter(slug=category_name_slug)[0],
                                                 country=Country.objects.get(iso_country_code=visitor_country_code),
+                                                organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
                                                 expiry_date__gt=now),15).page(1)
 
     category = Category.objects.filter(slug=category_name_slug)[0]
@@ -299,15 +340,15 @@ def ajax_category(request, category_name_slug):
     page = request.GET.get("page",False)
     media = request.GET.get("media", False)
  
-    excluded_orgs = Organization.objects.filter(exclude=True)
-
     now = datetime.utcnow()
 
     visitor_country_code = get_location(request)['visitor_country_code']
+    excluded_orgs = Organization.objects.filter(exclude=True, country=Country.objects.get(iso_country_code=visitor_country_code))
     if page != False:
         offers = Paginator(Offer.objects.filter(~Q(organization__in=excluded_orgs),
                                                 category=Category.objects.filter(slug=category_name_slug)[0],
                                                 country=Country.objects.get(iso_country_code=visitor_country_code),
+                                                organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
                                                 expiry_date__gt=now),15).page(page)
 
     context = {'offers': offers}
@@ -324,9 +365,10 @@ def business(request, business_name_slug):
     categories = get_all_categories()
     footer_categories = get_footer_categories()
     addt_footer_categories = get_addt_footer_categories()
-    visitor_country_code = get_location(request)['visitor_country_code']
-    country = get_location(request)['country']
-    countries = Country.objects.all()
+    location = get_location(request)
+    visitor_country_code = location['visitor_country_code']
+    country = location['country']
+    countries = Country.objects.filter(iso_country_code__in = Country.target_country_codes)
     country_alert = False
     if Country.default_country_code.lower() == visitor_country_code.lower():
         country_alert = 'Apologies, we do not currently serve your region!'
@@ -354,9 +396,10 @@ def search(request):
     categories = get_all_categories()
     footer_categories = get_footer_categories()
     addt_footer_categories = get_addt_footer_categories()
-    visitor_country_code = get_location(request)['visitor_country_code']
-    country = get_location(request)['country']
-    countries = Country.objects.all()
+    location = get_location(request)
+    visitor_country_code = location['visitor_country_code']
+    country = location['country']
+    countries = Country.objects.filter(iso_country_code__in = Country.target_country_codes)
     country_alert = False
     if Country.default_country_code.lower() == visitor_country_code.lower():
         country_alert = 'Apologies, we do not currently serve your region!'
@@ -440,9 +483,10 @@ def privacy(request):
     categories = get_all_categories()
     footer_categories = get_footer_categories()
     addt_footer_categories = get_addt_footer_categories()
-    visitor_country_code = get_location(request)['visitor_country_code']
-    country = get_location(request)['country']
-    countries = Country.objects.all()
+    location = get_location(request)
+    visitor_country_code = location['visitor_country_code']
+    country = location['country']
+    countries = Country.objects.filter(iso_country_code__in = Country.target_country_codes)
     country_alert = False
     if Country.default_country_code.lower() == visitor_country_code.lower():
         country_alert = 'Apologies, we do not currently serve your region!'
@@ -460,9 +504,10 @@ def legal(request):
     categories = get_all_categories()
     footer_categories = get_footer_categories()
     addt_footer_categories = get_addt_footer_categories()
-    visitor_country_code = get_location(request)['visitor_country_code']
-    country = get_location(request)['country']
-    countries = Country.objects.all()
+    location = get_location(request)
+    visitor_country_code = location['visitor_country_code']
+    country = location['country']
+    countries = Country.objects.filter(iso_country_code__in = Country.target_country_codes)
     country_alert = False
     if Country.default_country_code.lower() == visitor_country_code.lower():
         country_alert = 'Apologies, we do not currently serve your region!'

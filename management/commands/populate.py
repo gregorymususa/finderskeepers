@@ -3,13 +3,15 @@ from django.db import IntegrityError
 from couponfinder.models import Category, Organization, Offer, Country
 
 import requests
-import sys
+import sys, os
 import bs4
 import re
 from datetime import datetime, date, time, timedelta
 from random import randint
 import time as builtin_time
 import csv
+import urllib.request, urllib.parse
+import html
 
 
 class WebCrawler():
@@ -82,7 +84,7 @@ class WebCrawler():
         elif "Experiences".lower() == cat_name.lower():
             r = requests.get("https://www.myvouchercodes.co.uk/system/reveal/" + extID +
                              "?log=1&email=0&brand=&justloggedin=0&url=/days-out-attractions", headers=headers)
-        elif "Restaurants".lower() == cat_name.lower():
+        elif "Food & Drink".lower() == cat_name.lower():
             r = requests.get("https://www.myvouchercodes.co.uk/system/reveal/" + extID +
                              "?log=1&email=0&brand=&justloggedin=0&url=/restaurants-takeaways-bars", headers=headers)
         elif "Technology".lower() == cat_name.lower():
@@ -115,7 +117,7 @@ class WebCrawler():
         elif "Experiences".lower() == cat_name.lower():
             r = requests.get(
                 'https://www.myvouchercodes.co.uk/days-out-attractions', headers=headers)
-        elif "Restaurants".lower() == cat_name.lower():
+        elif "Food & Drink".lower() == cat_name.lower():
             r = requests.get(
                 'https://www.myvouchercodes.co.uk/restaurants-takeaways-bars', headers=headers)
         elif "Technology".lower() == cat_name.lower():
@@ -232,7 +234,7 @@ class WebCrawler():
     def crawl(self, category, country):
         """
         Starts the script, with the following mandatory parameter:
-        category  - "Fashion", "Travel", "Experiences", "Restaurants", "Technology", "Health", "Sports"
+        category  - "Fashion", "Travel", "Experiences", "Food & Drink", "Technology", "Health", "Sports"
         """
         r= self.requests_get_category(category)
         if False == r:
@@ -301,26 +303,243 @@ class WebCrawler():
 
 class AwinLoader():
 
-    def download(self):
-        r = requests.get('https://ui.awin.com/export-promotions/636515/7f0f2cc60cbb3bee7689ed080545c2df?downloadType=csv&promotionType=&categoryIds=329,330,333,335,336,338&regionIds=1&advertiserIds=&membershipStatus=&promotionStatus=active')
+    project_dir = "/home/gunter/couponfinder-env/couponfinderproject/"
+    static_dir = "couponfinder/static/couponfinder/"
+    collectstatic_dir = "couponfinder/logos/"
+
+    ###############
+    # Advertisers #
+    ###############
+    def download_advertisers(self):
+        r = requests.get('https://ui2.awin.com/affiliates/shopwindow/datafeed_metadata.php?user=636515&password=ea2ca2ead39f9d99dab451eb573e0495&format=csv&filter=all_all&compression=')
         try:
             r.raise_for_status()
         except:
-            print(r.status_code, '\nGoodbye!')
+            print(r.status_code, '\ngoodbye!')
         
-        with open(file='/var/tmp/promotions.csv',mode='wt',encoding='utf_8') as file_writer:
+        with open(file='/var/tmp/advertisers.csv',mode='wt',encoding='utf_8') as file_writer:
             file_writer.write(r.text)
-     
-    def read_csv(self,f,mode,encoding):
+    
+    def active_determ(self,active):
+        return False if "no"==active.lower() else True
+    
+    def logo_determ(self,logo):
+        return "" if "No logo provided".lower()==logo.lower() else logo
+    
+    def default_clickthrough_determ(self,default_clickthrough):
+        return "" if "You are not joined to this merchant".lower()==default_clickthrough.lower() else default_clickthrough
+
+    def getSlug(self, a_string):
+        slug = ""
+        for letter in a_string:
+            if letter.isalnum():
+                slug+=letter
+            elif " " == letter:
+                slug+="_"
+        return slug.lower()
+    
+    def download_logo(self,external_logo,slug):
+        if "" != self.logo_determ(external_logo):
+            try:
+                if external_logo.lower() != Organization.objects.get(slug=slug).external_logo.lower():
+                    return urllib.request.urlretrieve(
+                               url=external_logo,
+                               filename = self.project_dir + self.static_dir + "logos/" + slug + "." + urllib.parse.urlsplit(external_logo).path.split(".")[-1])
+            except:
+                #throws an exception, if the Organization object does not exist
+                return urllib.request.urlretrieve(
+                           url=external_logo,
+                           filename = self.project_dir + self.static_dir + "logos/" + slug + "." + urllib.parse.urlsplit(external_logo).path.split(".")[-1])
+        return False
+
+    def resize_logo(self,logo_path):
+        """Place the logo in the middle of a white square.
+        
+        Keyword arguments:
+        logo : string
+            string path to the logo e.g. /dir/dir/file.jpg
+        """
+        w = int(os.popen('identify -format "%w" '+logo_path+'[0]').read())
+        h = int(os.popen('identify -format "%h" '+logo_path+'[0]').read())
+        x_offset = 0
+        y_offset = 0
+         
+        if w < h:
+            x_offset = (h - w)/2
+            y_offset = 0
+            w = h
+        elif w > h:
+            x_offset = 0
+            y_offset = (w - h)/2
+            h = w
+         
+        fname = logo_path.split(".",1)[0]
+        ext = logo_path.split(".",1)[1]
+        os.system('sudo convert -size ' + str(w) + 'x' + str(h) + ' xc:white canvas.png')
+        os.system('sudo convert -coalesce canvas.png ' + logo_path  + ' -geometry +' + str(x_offset)  + '+' + str(y_offset)  +  ' -composite ' + fname + '.png')
+        os.system('sudo rm -r ' + logo_path)
+        os.system('sudo rm -r canvas.png')
+
+    def read_advertisers_csv(self,f,mode,encoding):
         with open(file=f,mode=mode,encoding=encoding) as csv_file:
             csv_reader = csv.DictReader(f=csv_file)
             for row in csv_reader:
-                print(row['Type'],row['Promotion ID'], row["Code"])
-     
-    def load(self, category, country):
-        #self.download()
-        #keys: "Promotion ID","Advertiser","Advertiser ID","Type","Code","Description","Starts","Ends","Categories","Regions","Terms","Deeplink Tracking","Deeplink","Commission Groups","Commission","Exclusive","Date Added","Title"
-        self.read_csv(f='/var/tmp/promotions.csv',mode='rt',encoding='utf_8')
+                logo_path = self.download_logo(row["Logo"],self.getSlug(row["Merchant Name"]))
+                if False != logo_path:
+                    logo_path = logo_path[0] 
+                    self.resize_logo(logo_path)
+                
+                try:
+                    #print(row["Merchant ID"], row["Merchant Name"])
+                    slug = self.getSlug(row["Merchant Name"])
+                    Organization.objects.update_or_create(
+                        external_id = row["Merchant ID"],
+                        source = Organization.sources[0][0],
+                        defaults = {
+                            'name' : html.unescape(row["Merchant Name"]),
+                            'external_logo' : self.logo_determ(row["Logo"]),
+                            'program_joined' : self.active_determ(row["Active"]),
+                            'slogan' : html.unescape(row["Strapline"]),
+                            'description' : html.unescape(row["Description"]),
+                            'affiliate_link' : html.unescape(self.default_clickthrough_determ(row["Default Clickthrough"])),
+                            'website' : html.unescape(row["Display URL"]),
+                            'country' : Country.objects.get(iso_country_code=row["Primary Region"]),
+                            'slug' : slug,
+                            'logo' : "" if ""==self.logo_determ(row["Logo"]) else self.collectstatic_dir+slug+'.png'
+                        }
+                    )
+                except:
+                    # TODO: What happens if multiple sources, have the same Organization (e.g. DressLily)
+                    #
+                    #What happens if those Organizations have spelling variants between the sources?
+                    #
+                    #Can the script prompt me... with suggestions
+                    #1. Choose DressLily
+                    #2. Choose Lily D
+                    #3. Enter Org ID
+                    #
+                    #-----------
+                    #
+                    #for now... skip entries with Integrity errors
+                    #BUT list them
+                    #
+                    # NB. Remember advertiser duplicates, e.g. Qatar_IT, Qatar_US (there are a lot of country duplicates)
+                    # possible solution: parent organization
+                    #
+                    #Can this happen with Offers
+                    # TODO: load logos, from external logo (prefereably using media)
+                    print("Integrity Error:", row["Merchant ID"], row["Merchant Name"], row["Primary Region"], row["Active"])
+
+    def load_advertisers(self, country):
+        self.download_advertisers()
+        self.read_advertisers_csv(f='/var/tmp/advertisers.csv',mode='rt',encoding='utf_8')
+        print('Success')
+
+    ##############
+    # Promotions #
+    ##############
+    def download_promotions(self,category):
+        # todo download as promotions_travel.csv, promotions_fashion.csv; loading accordingly
+        if "experiences"==category.lower():
+            r = requests.get('https://ui.awin.com/export-promotions/636515/7f0f2cc60cbb3bee7689ed080545c2df?downloadType=csv&promotionType=&categoryIds=650,260,590,592,588,591,589&regionIds=1&advertiserIds=&membershipStatus=&promotionStatus=active')
+        elif "fashion"==category.lower():
+            r = requests.get('https://ui.awin.com/export-promotions/636515/7f0f2cc60cbb3bee7689ed080545c2df?downloadType=csv&promotionType=&categoryIds=147,149,170,171,548,183,179,175,172,189,194,198,206,208,204,201,542,544,546,547,595,163,168,159,169,161,167,205,613,626,623&regionIds=1&advertiserIds=&membershipStatus=&promotionStatus=active')
+        elif "health"==category.lower():
+            r = requests.get('https://ui.awin.com/export-promotions/636515/7f0f2cc60cbb3bee7689ed080545c2df?downloadType=csv&promotionType=&categoryIds=101,107,111,113,114,116,118&regionIds=1&advertiserIds=&membershipStatus=&promotionStatus=active')
+        elif "food_drink"==category.lower():
+            r = requests.get('https://ui.awin.com/export-promotions/636515/7f0f2cc60cbb3bee7689ed080545c2df?downloadType=csv&promotionType=&categoryIds=608,437,438,440,441,442,444,446,447,607&regionIds=1&advertiserIds=&membershipStatus=&promotionStatus=active')
+        elif "sports"==category.lower():
+            r = requests.get('https://ui.awin.com/export-promotions/636515/7f0f2cc60cbb3bee7689ed080545c2df?downloadType=csv&promotionType=&categoryIds=174,178,203,199,252,559,255,256,265,593,258,259,632,261,262,557,266,267,268,269,277,272,270,271,273,561,558,560&regionIds=1&advertiserIds=&membershipStatus=&promotionStatus=active')
+        elif "technology"==category.lower():
+            r = requests.get('https://ui.awin.com/export-promotions/636515/7f0f2cc60cbb3bee7689ed080545c2df?downloadType=csv&promotionType=&categoryIds=80,83,84,85,86,87,88,90,89,91,60,128,130,133,212,209,210,211,220,228,229,11,537,19,22,24,30,29,32,619,34,652,45,46,651,47,48,49,44,50,51,231,549,576,575,577,579,354,353,350,351,352&regionIds=1&advertiserIds=&membershipStatus=&promotionStatus=active')
+        elif "travel"==category.lower():
+            r = requests.get('https://ui.awin.com/export-promotions/636515/7f0f2cc60cbb3bee7689ed080545c2df?downloadType=csv&promotionType=&categoryIds=629,329,330,333,335,336,338&regionIds=1&advertiserIds=&membershipStatus=&promotionStatus=active')
+
+        try:
+            r.raise_for_status()
+        except:
+            print(r.status_code, '\ngoodbye!')
+        
+        with open(file='/var/tmp/promotions_'+category+'.csv',mode='wt',encoding='utf_8') as file_writer:
+            file_writer.write(r.text)
+
+    def type_determ(self, typ):
+        if "Promotions Only" == typ:
+            return Offer.labels[1][1]
+        elif "Vouchers Only" == typ:
+            return Offer.labels[0][1]
+
+    def code_determ(self, typ, code):
+        if "Promotions Only" == typ:
+            return ""
+        elif "Vouchers Only" == typ:
+            return code
+
+    def starts_determ(self, starts):
+        # e.g. 31/07/2019 16:36:00
+        dd = starts[0:2]
+        mm = starts[3:5]
+        yyyy = starts[6:11]
+        HH = starts[11:13]
+        MM = starts[14:16]
+        SS = starts[17:19]
+        return datetime.combine(
+            date(year=int(yyyy), month=int(mm), day=int(dd)),
+            time(hour=int(HH),minute=int(MM), second=int(SS))
+        ).isoformat()+'Z'
+
+    def ends_determ(self, ends):
+        # e.g. 30/09/2019 22:59:00
+        dd = ends[0:2]
+        mm = ends[3:5]
+        yyyy = ends[6:11]
+        HH = ends[11:13]
+        MM = ends[14:16]
+        SS = ends[17:19]
+        return datetime.combine(
+            date(year=int(yyyy), month=int(mm), day=int(dd)),
+            time(hour=int(HH),minute=int(MM), second=int(SS))
+        ).isoformat()+'Z'
+
+    def exclusive_determ(self, exclusive):
+        return True if "true"==exclusive.lower() else False
+
+    def read_promotions_csv(self,f,mode,encoding,category,country):
+        with open(file=f,mode=mode,encoding=encoding) as csv_file:
+            csv_reader = csv.DictReader(f=csv_file)
+            for row in csv_reader:
+                if "United Kingdom" in row["Regions"] and "Promotions Only" == row["Type"]:
+                    # load GB only because we are not ready for other countries (in terms of legal requirements)
+                    # load promotions only, because current vouchers are ***** (asked AWIN how to proceed)
+                    # TODO stop hardcoding the above
+                    #print(row['Advertiser'],row['Advertiser ID'],row['Terms'])#promotions
+                    try:
+                        Offer.objects.update_or_create(
+                            external_id = row["Promotion ID"],
+                            source = Offer.sources[0][0],
+                            defaults = {
+                                'organization' : Organization.objects.get(external_id=row['Advertiser ID']),
+                                'label' : self.type_determ(row["Type"]),
+                                'code' : self.code_determ(row["Type"], row["Code"]),
+                                'title' : html.unescape(row["Title"]),
+                                'description' : html.unescape(row["Description"]),
+                                'start_date' : self.starts_determ(row["Starts"]),
+                                'expiry_date' : self.ends_determ(row["Ends"]),
+                                'category' : Category.objects.get(slug=category),
+                                'country' : Country.objects.get(iso_country_code=country),
+                                'terms' : row["Terms"],
+                                'affiliate_link' : html.unescape(row["Deeplink Tracking"]),
+                                'link' : html.unescape(row["Deeplink"]),
+                                'exclusive' : self.exclusive_determ(row["Exclusive"])
+                            }
+                        )
+                    except Exception as e:
+                        print(row['Advertiser'],row['Advertiser ID'],e)
+                    
+ 
+    def load_promotions(self, category, country):
+        self.download_promotions(category)
+        self.read_promotions_csv(f='/var/tmp/promotions_'+category+'.csv',mode='rt',encoding='utf_8', category=category, country=country)
         print('Success')
 
 
@@ -329,9 +548,10 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('method', nargs=1, choices=['crawler', 'awin'])
-        parser.add_argument('category', nargs=1, choices=[
-                            'experiences', 'fashion', 'health', 'restaurants', 'sports', 'technology', 'travel'])
+        parser.add_argument('target', nargs=1, choices=['advertisers', 'promotions'])
         parser.add_argument('country', nargs=1, choices=list(Country.target_country_codes))
+        parser.add_argument('category', nargs=1, choices=[
+                            'experiences', 'fashion', 'health', 'food_drink', 'sports', 'technology', 'travel'])
 
     def handle(self, *args, **options):
         # handle the command
@@ -339,8 +559,11 @@ class Command(BaseCommand):
         if "crawler" == options['method'][0].lower():
             crawler = WebCrawler()
             crawler.crawl(options['category'][0],Country.objects.get(iso_country_code=options['country'][0]))
-        elif "awin" == options['method'][0].lower():
+        elif "awin" == options['method'][0].lower() and 'advertisers' == options['target'][0].lower():
             awin_loader = AwinLoader()
-            awin_loader.load(options['category'][0],Country.objects.get(iso_country_code=options['country'][0]))
+            awin_loader.load_advertisers(Country.objects.get(iso_country_code=options['country'][0]))
+        elif "awin" == options['method'][0].lower() and 'promotions' == options['target'][0].lower():
+            awin_loader = AwinLoader()
+            awin_loader.load_promotions(options['category'][0], options['country'][0])
         
         # We might need to write the MAIN logic in here, and define the helper functions, elsewhere in the class -- makes it easier to use the Query Set API

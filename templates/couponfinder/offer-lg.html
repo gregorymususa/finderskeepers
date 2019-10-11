@@ -16,13 +16,18 @@
     <div class="card-body bg-white border-top border-top-dark">
       <div class="row">
         <div class="col-12">
-          <div class="card-title font-weight-bold mb-4">{{ offer.description }} at {{ offer.organization.name }}</div>
+          <div class="card-title font-weight-bold mb-4">{{ offer.title }} at {{ offer.organization.name }}</div>
           <div class="card-text">
             {% if "Offer Code" == offer.label %}
               <p class="bg-primary text-white py-1"><strong>{{ offer.code }}</strong></p>
             {% endif %}
-            <!-- <a class="text-primary d-inline-block w-100 mb-2" href="{{offer.affiliate_link}}"><small>Visit site & get promotion</small></a> -->
-            <a class="text-primary d-inline-block w-100 mb-2" href="{{offer.organization.website}}"><small>Visit site & get promotion</small></a>
+
+            {% if offer.organization.program_joined %}
+              <a class="text-primary d-inline-block w-100 mb-2" href="{{offer.affiliate_link}}"><small>Visit site & get promotion</small></a>
+            {% else %}
+              <a class="text-primary d-inline-block w-100 mb-2" href="{{offer.link}}"><small>Visit site & get promotion</small></a>
+            {% endif %}
+
             <a class="text-primary d-inline-block w-100 couponfinder-card-business-link" href="{% url 'business' offer.organization.slug %}"><small>See all from {{ offer.organization.name }}</small></a>
           </div>
         </div>

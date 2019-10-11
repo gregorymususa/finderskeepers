@@ -200,14 +200,14 @@
         {% if categories %}
           {% for category in categories %}
             <li class="nav-item">
-              <a class="nav-link bg-primary text-white rounded-0" href="{% url 'category' category.name|lower %}">{{category}}</a>
+              <a class="nav-link bg-primary text-white rounded-0" href="{% url 'category' category.slug %}">{{category}}</a>
             </li>
           {% endfor %}
         {% endif %}
       </ul>
     </div>
 
-    <!-- Modal -->
+    <!-- Modal: Change Location -->
     <div class="modal fade" id="location-modal" tabindex="-1" role="dialog" aria-labelledby="Location Selection Modal" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -259,6 +259,7 @@
       </div>
     </div>
     
+    <!-- Modal: Offer Terms and Conditions --> 
     <div class="modal fade" id="couponfinder_tsandcs" tab-index="-1" role="dialog">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -300,7 +301,7 @@
       <div class="row">
         {% if footer_categories %}
         {% for category in footer_categories %}
-        <div class="col-3 p-1 text-center"><a class="text-white" href="{% url 'category' category.name|lower %}">{{category.name}}</a></div>
+        <div class="col-3 p-1 text-center"><a class="text-white" href="{% url 'category' category.slug %}">{{category.name}}</a></div>
         {% endfor %}
         {% endif %}
         <div class="col-3 p-1 text-center">More</div>
@@ -308,7 +309,7 @@
       <div class="row">
         {% if footer_categories %}
         {% for category in footer_categories %}
-        <div class="col-3 p-1 text-center"><a href="{% url 'category' category.name|lower %}"><i class="fas {{category.icon}} fa-2x text-white"></i></a></div>
+        <div class="col-3 p-1 text-center"><a href="{% url 'category' category.slug %}"><i class="fas {{category.icon}} fa-2x text-white"></i></a></div>
         {% endfor %}
         {% endif %}
         <div class="col-3 p-1 text-center">
@@ -322,14 +323,14 @@
       <div class="row">
         {% if addt_footer_categories %}
         {% for category in addt_footer_categories %}
-        <div class="col-3 p-1 text-center"><a class="text-white" href="{% url 'category' category.name|lower %}">{{category.name}}</a></div>
+        <div class="col-3 p-1 text-center"><a class="text-white" href="{% url 'category' category.slug %}">{{category.name}}</a></div>
         {% endfor %}
         {% endif %}
       </div>
       <div class="row">
         {% if addt_footer_categories %}
         {% for category in addt_footer_categories %}
-        <div class="col-3 p-1 text-center"><a href="{% url 'category' category.name|lower %}"><i class="fas {{category.icon}} fa-2x text-white"></i></a></div>
+        <div class="col-3 p-1 text-center"><a href="{% url 'category' category.slug %}"><i class="fas {{category.icon}} fa-2x text-white"></i></a></div>
         {% endfor %}
         {% endif %}
       </div>

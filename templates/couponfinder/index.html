@@ -34,7 +34,7 @@
   {% for category in categories %}
 
   <h1 class="h2 mt-5 mb-0 pt-4 pr-2 pb-0 pl-3 bg-light text-primary couponfinder-sm-md-heading">
-    <a class="text-primary" href="{% url 'category' category.name|lower %}">
+    <a class="text-primary" href="{% url 'category' category.slug %}">
     {{category.name}}
     <small style="font-size:0.95rem;">(view all)</small>
     </a>
@@ -59,13 +59,18 @@
                   {% endif %}
                 </div>
                 <div class="col-12">
-                  <div class="card-title text-center font-weight-bold">{{ offer.description }} at {{ offer.organization.name }}</div>
+                  <div class="card-title text-center font-weight-bold">{{ offer.title }} at {{ offer.organization.name }}</div>
                   <div class="card-text text-center">
                     {% if "Offer Code" == offer.label %}
                       <p class="bg-primary text-white py-2"><strong>{{ offer.code }}</strong></p>
                     {% endif %}
-                    <!-- <a class="text-primary d-inline-block w-100 mb-2" href="{{offer.affiliate_link}}">Visit site & get promotion</a> -->
-                    <a class="text-primary d-inline-block w-100 mb-2" href="{{offer.organization.website}}">Visit site & get promotion</a>
+
+                    {% if offer.organization.program_joined %}
+                      <a class="text-primary d-inline-block w-100 mb-2" href="{{offer.affiliate_link}}">Visit site & get promotion</a>
+                    {% else %}
+                      <a class="text-primary d-inline-block w-100 mb-2" href="{{offer.link}}">Visit site & get promotion</a>
+                    {% endif %}
+
                     <a class="text-primary d-inline-block w-100" href="{% url 'business' offer.organization.slug %}">See all from {{ offer.organization.name }}</a>
                   </div>
                 </div>
@@ -98,7 +103,7 @@
     </div>
     <div class="container">
       <div class="row">
-          <a class="btn btn-info mx-auto text-light" href="{% url 'category' category.name|lower %}">See all in {{category.name}}</a>
+          <a class="btn btn-info mx-auto text-light" href="{% url 'category' category.slug %}">See all in {{category.name}}</a>
       </div>
     </div>
 
@@ -120,7 +125,7 @@
   {% for category in categories %}
     <div class="couponfinder-lg-heading">
       <h1 class="h2 mt-5 mb-4 pl-2 text-primary">
-        <a class="text-primary" href="{% url 'category' category.name|lower %}">{{category.name}}</a>
+        <a class="text-primary" href="{% url 'category' category.slug %}">{{category.name}}</a>
       </h1>
     </div>
     <div class="card-columns">
@@ -134,13 +139,18 @@
           <div class="card-body bg-white border-top border-top-dark">
             <div class="row">
               <div class="col-12">
-                <div class="card-title font-weight-bold mb-4">{{ offer.description }} at {{ offer.organization.name }}</div>
+                <div class="card-title font-weight-bold mb-4">{{ offer.title }} at {{ offer.organization.name }}</div>
                 <div class="card-text">
                   {% if "Offer Code" == offer.label %}
                     <p class="bg-primary text-white py-1"><strong>{{ offer.code }}</strong></p>
                   {% endif %}
-                  <!-- <a class="text-primary d-inline-block w-100 mb-2" href="{{offer.affiliate_link}}"><small>Visit site & get promotion</small></a> -->
-                  <a class="text-primary d-inline-block w-100 mb-2" href="{{offer.organization.website}}"><small>Visit site & get promotion</small></a>
+
+                  {% if offer.organization.program_joined %}
+                    <a class="text-primary d-inline-block w-100 mb-2" href="{{offer.affiliate_link}}"><small>Visit site & get promotion</small></a>
+                  {% else %}
+                    <a class="text-primary d-inline-block w-100 mb-2" href="{{offer.link}}"><small>Visit site & get promotion</small></a>
+                  {% endif %}
+
                   <a class="text-primary d-inline-block w-100" href="{% url 'business' offer.organization.slug %}"><small>See all from {{ offer.organization.name }}</small></a>
                 </div>
               </div>

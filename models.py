@@ -90,6 +90,7 @@ class Offer(models.Model):
     expiry_date = models.DateTimeField("ExpiryDate")
     is_while_stocks_last = models.BooleanField("WhileStocksLast", default=False)
     label = models.CharField('Label', max_length=11, choices=labels, blank=True, null=True)
+    is_coupon = models.BooleanField("IsCoupon", default=False)
     terms = models.TextField('Terms', blank=True, null=True)
     exclusive = models.BooleanField('Exclusive', default=False)
     exclude = models.BooleanField('Exclude', default=False)

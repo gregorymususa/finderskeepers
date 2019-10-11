@@ -465,9 +465,9 @@ class AwinLoader():
 
     def type_determ(self, typ):
         if "Promotions Only" == typ:
-            return Offer.labels[1][1]
+            return True
         elif "Vouchers Only" == typ:
-            return Offer.labels[0][1]
+            return False
 
     def code_determ(self, typ, code):
         if "Promotions Only" == typ:
@@ -508,35 +508,57 @@ class AwinLoader():
         with open(file=f,mode=mode,encoding=encoding) as csv_file:
             csv_reader = csv.DictReader(f=csv_file)
             for row in csv_reader:
-                if "United Kingdom" in row["Regions"] and "Promotions Only" == row["Type"]:
-                    # load GB only because we are not ready for other countries (in terms of legal requirements)
-                    # load promotions only, because current vouchers are ***** (asked AWIN how to proceed)
-                    # TODO stop hardcoding the above
-                    #print(row['Advertiser'],row['Advertiser ID'],row['Terms'])#promotions
-                    try:
-                        Offer.objects.update_or_create(
-                            external_id = row["Promotion ID"],
-                            source = Offer.sources[0][0],
-                            defaults = {
-                                'organization' : Organization.objects.get(external_id=row['Advertiser ID']),
-                                'label' : self.type_determ(row["Type"]),
-                                'code' : self.code_determ(row["Type"], row["Code"]),
-                                'title' : html.unescape(row["Title"]),
-                                'description' : html.unescape(row["Description"]),
-                                'start_date' : self.starts_determ(row["Starts"]),
-                                'expiry_date' : self.ends_determ(row["Ends"]),
-                                'category' : Category.objects.get(slug=category),
-                                'country' : Country.objects.get(iso_country_code=country),
-                                'terms' : row["Terms"],
-                                'affiliate_link' : html.unescape(row["Deeplink Tracking"]),
-                                'link' : html.unescape(row["Deeplink"]),
-                                'exclusive' : self.exclusive_determ(row["Exclusive"])
-                            }
-                        )
-                    except Exception as e:
-                        print(row['Advertiser'],row['Advertiser ID'],e)
-                    
- 
+                # load GB only because we are not ready for other countries (in terms of legal requirements)
+                if "United Kingdom" in row["Regions"]:
+                    if Organization.objects.filter(external_id=row['Advertiser ID']).exists():
+                        if Organization.objects.get(external_id=row['Advertiser ID']).program_joined:
+                                try:
+                                    Offer.objects.update_or_create(
+                                        external_id = row["Promotion ID"],
+                                        source = Offer.sources[0][0],
+                                        defaults = {
+                                            'organization' : Organization.objects.get(external_id=row['Advertiser ID']),
+                                            'is_coupon' : self.type_determ(row["Type"]),
+                                            'code' : self.code_determ(row["Type"], row["Code"]),
+                                            'title' : html.unescape(row["Title"]),
+                                            'description' : html.unescape(row["Description"]),
+                                            'start_date' : self.starts_determ(row["Starts"]),
+                                            'expiry_date' : self.ends_determ(row["Ends"]),
+                                            'category' : Category.objects.get(slug=category),
+                                            'country' : Country.objects.get(iso_country_code=country),
+                                            'terms' : row["Terms"],
+                                            'affiliate_link' : html.unescape(row["Deeplink Tracking"]),
+                                            'link' : html.unescape(row["Deeplink"]),
+                                            'exclusive' : self.exclusive_determ(row["Exclusive"])
+                                        }
+                                    )
+                                except Exception as e:
+                                    print(row['Advertiser'],row['Advertiser ID'],e)
+                        elif not Organization.objects.get(external_id=row['Advertiser ID']).program_joined:
+                            if "Promotions Only" == row["Type"]:
+                                try:
+                                    Offer.objects.update_or_create(
+                                        external_id = row["Promotion ID"],
+                                        source = Offer.sources[0][0],
+                                        defaults = {
+                                            'organization' : Organization.objects.get(external_id=row['Advertiser ID']),
+                                            'is_coupon' : self.type_determ(row["Type"]),
+                                            'code' : self.code_determ(row["Type"], row["Code"]),
+                                            'title' : html.unescape(row["Title"]),
+                                            'description' : html.unescape(row["Description"]),
+                                            'start_date' : self.starts_determ(row["Starts"]),
+                                            'expiry_date' : self.ends_determ(row["Ends"]),
+                                            'category' : Category.objects.get(slug=category),
+                                            'country' : Country.objects.get(iso_country_code=country),
+                                            'terms' : row["Terms"],
+                                            'affiliate_link' : html.unescape(row["Deeplink Tracking"]),
+                                            'link' : html.unescape(row["Deeplink"]),
+                                            'exclusive' : self.exclusive_determ(row["Exclusive"])
+                                        }
+                                    )
+                                except Exception as e:
+                                    print(row['Advertiser'],row['Advertiser ID'],e)
+     
     def load_promotions(self, category, country):
         self.download_promotions(category)
         self.read_promotions_csv(f='/var/tmp/promotions_'+category+'.csv',mode='rt',encoding='utf_8', category=category, country=country)

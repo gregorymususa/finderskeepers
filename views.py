@@ -178,112 +178,35 @@ def index(request):
     ##################
     # Small Displays #
     ##################
-    sm_fashion = Offer.objects.filter(
-        ~Q(organization__in=excluded_orgs),
-        category=Category.objects.get(name="Fashion"),
-        country=Country.objects.get(iso_country_code=visitor_country_code),
-        organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
-        expiry_date__gt=now).order_by('?')[0:4]
-
-    sm_travel = Offer.objects.filter(
-        ~Q(organization__in=excluded_orgs),
-        category=Category.objects.get(name="Travel"),
-        country=Country.objects.get(iso_country_code=visitor_country_code),
-        organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
-        expiry_date__gt=now).order_by('?')[0:4]
-
-    sm_experiences = Offer.objects.filter(
-        ~Q(organization__in=excluded_orgs),
-        category=Category.objects.get(name="Experiences"),
-        country=Country.objects.get(iso_country_code=visitor_country_code),
-        organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
-        expiry_date__gt=now).order_by('?')[0:4]
-
-    sm_groceries = Offer.objects.filter(
-        ~Q(organization__in=excluded_orgs),
-        category=Category.objects.get(name="Health"),
-        country=Country.objects.get(iso_country_code=visitor_country_code),
-        organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
-        expiry_date__gt=now).order_by('?')[0:4]
-
-    sm_food_drink = Offer.objects.filter(
-        ~Q(organization__in=excluded_orgs),
-        category=Category.objects.get(name="Food & Drink"),
-        country=Country.objects.get(iso_country_code=visitor_country_code),
-        organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
-        expiry_date__gt=now).order_by('?')[0:4]
-
-    sm_sports = Offer.objects.filter(
-        ~Q(organization__in=excluded_orgs),
-        category=Category.objects.get(name="Sports"),
-        country=Country.objects.get(iso_country_code=visitor_country_code),
-        organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
-        expiry_date__gt=now).order_by('?')[0:4]
-
-    sm_technology = Offer.objects.filter(
-        ~Q(organization__in=excluded_orgs),
-        category=Category.objects.get(name="Technology"),
-        country=Country.objects.get(iso_country_code=visitor_country_code),
-        organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
-        expiry_date__gt=now).order_by('?')[0:4]
+    sm_offer_range = Offer.objects.none()
+    sm_offers = []
+    for catg in Category.objects.all():
+        sm_offers.append(
+            Offer.objects.filter(
+                ~Q(organization__in=excluded_orgs),
+                category=Category.objects.get(name=catg.name),
+                country=Country.objects.get(iso_country_code=visitor_country_code),
+                organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
+                expiry_date__gt=now,
+                exclude=False).order_by('?')[0:4])
     
-    sm_offer_range = sm_fashion.union(
-        sm_travel, sm_experiences, sm_groceries, sm_food_drink, sm_sports, sm_technology)
+    sm_offer_range = sm_offer_range.union(sm_offers[0],sm_offers[1],sm_offers[2],sm_offers[3],sm_offers[4],sm_offers[5],sm_offers[6])
 
     ##################
     # Large Displays #
     ##################
-    lg_fashion = Offer.objects.filter(
-        ~Q(organization__in=excluded_orgs),
-        category=Category.objects.get(name="Fashion"),
-        country=Country.objects.get(iso_country_code=visitor_country_code),
-        organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
-        expiry_date__gt=now).order_by('?')[0:9]
-
-    lg_travel = Offer.objects.filter(
-        ~Q(organization__in=excluded_orgs),
-        category=Category.objects.get(name="Travel"),
-        country=Country.objects.get(iso_country_code=visitor_country_code),
-        organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
-        expiry_date__gt=now).order_by('?')[0:9]
-
-    lg_experiences = Offer.objects.filter(
-        ~Q(organization__in=excluded_orgs),
-        category=Category.objects.get(name="Experiences"),
-        country=Country.objects.get(iso_country_code=visitor_country_code),
-        organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
-        expiry_date__gt=now).order_by('?')[0:9]
-
-    lg_groceries = Offer.objects.filter(
-        ~Q(organization__in=excluded_orgs),
-        category=Category.objects.get(name="Health"),
-        country=Country.objects.get(iso_country_code=visitor_country_code),
-        organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
-        expiry_date__gt=now).order_by('?')[0:9]
-
-    lg_food_drink = Offer.objects.filter(
-        ~Q(organization__in=excluded_orgs),
-        category=Category.objects.get(name="Food & Drink"),
-        country=Country.objects.get(iso_country_code=visitor_country_code),
-        organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
-        expiry_date__gt=now).order_by('?')[0:9]
-
-    lg_sports = Offer.objects.filter(
-        ~Q(organization__in=excluded_orgs),
-        category=Category.objects.get(name="Sports"),
-        country=Country.objects.get(iso_country_code=visitor_country_code),
-        organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
-        expiry_date__gt=now).order_by('?')[0:9]
-
-    lg_technology = Offer.objects.filter(
-        ~Q(organization__in=excluded_orgs),
-        category=Category.objects.get(name="Technology"),
-        country=Country.objects.get(iso_country_code=visitor_country_code),
-        organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
-        expiry_date__gt=now).order_by('?')[0:9]
-
-    lg_offer_range = lg_fashion.union(
-        lg_travel, lg_experiences, lg_groceries, lg_food_drink, lg_sports, lg_technology)
+    lg_offer_range = Offer.objects.none()
+    lg_offers = []
+    for catg in Category.objects.all():
+        lg_offers.append(
+            Offer.objects.filter(
+                ~Q(organization__in=excluded_orgs),
+                category=Category.objects.get(name=catg.name),
+                country=Country.objects.get(iso_country_code=visitor_country_code),
+                organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
+                expiry_date__gt=now,
+                exclude=False).order_by('?')[0:9])
+    lg_offer_range = lg_offer_range.union(lg_offers[0],lg_offers[1],lg_offers[2],lg_offers[3],lg_offers[4],lg_offers[5],lg_offers[6])
 
     context = {'categories': categories, 'organizations': organizations, 'current_visitor_country_code': visitor_country_code,
                'active_country': country, 'countries': countries, 'default_country_code': Country.default_country_code,

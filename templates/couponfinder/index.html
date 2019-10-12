@@ -61,7 +61,7 @@
                 <div class="col-12">
                   <div class="card-title text-center font-weight-bold">{{ offer.title }} at {{ offer.organization.name }}</div>
                   <div class="card-text text-center">
-                    {% if "Offer Code" == offer.label %}
+                    {% if offer.is_coupon %}
                       <p class="bg-primary text-white py-2"><strong>{{ offer.code }}</strong></p>
                     {% endif %}
 
@@ -141,7 +141,7 @@
               <div class="col-12">
                 <div class="card-title font-weight-bold mb-4">{{ offer.title }} at {{ offer.organization.name }}</div>
                 <div class="card-text">
-                  {% if "Offer Code" == offer.label %}
+                  {% if offer.is_coupon %}
                     <p class="bg-primary text-white py-1"><strong>{{ offer.code }}</strong></p>
                   {% endif %}
 

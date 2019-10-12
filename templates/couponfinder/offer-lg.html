@@ -3,7 +3,7 @@
 {% if offers %}
 {% for offer in offers %}
   <div class="card w-100 mb-5 bg-light text-dark couponfinder-offer text-center couponfinder_dropshadow" style="background-image:url('http://yetanothersandbox.com/images/card-bg.png');">
-    {% if "Offer Code" != offer.label %}
+    {% if offer.is_coupon %}
       <!--Possible TODO: Bring special attention to the card-->
       {% if '' != offer.organization.logo %}
         <img alt="Organization Logo" class="card-img-top my-3 mx-auto p-1 bg-light couponfinder_dropshadow" style="width:5.5rem; height:auto;" src="{% static offer.organization.logo %}">
@@ -18,7 +18,7 @@
         <div class="col-12">
           <div class="card-title font-weight-bold mb-4">{{ offer.title }} at {{ offer.organization.name }}</div>
           <div class="card-text">
-            {% if "Offer Code" == offer.label %}
+            {% if offer.is_coupon %}
               <p class="bg-primary text-white py-1"><strong>{{ offer.code }}</strong></p>
             {% endif %}
 

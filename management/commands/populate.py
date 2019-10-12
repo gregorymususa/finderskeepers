@@ -465,9 +465,9 @@ class AwinLoader():
 
     def type_determ(self, typ):
         if "Promotions Only" == typ:
-            return True
-        elif "Vouchers Only" == typ:
             return False
+        elif "Vouchers Only" == typ:
+            return True
 
     def code_determ(self, typ, code):
         if "Promotions Only" == typ:

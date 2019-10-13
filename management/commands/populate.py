@@ -433,7 +433,7 @@ class AwinLoader():
     def load_advertisers(self, country):
         self.download_advertisers()
         self.read_advertisers_csv(f='/var/tmp/advertisers.csv',mode='rt',encoding='utf_8')
-        print('Success')
+        print('Success: Advertisers')
 
     ##############
     # Promotions #
@@ -605,7 +605,7 @@ class AwinLoader():
     def load_promotions(self, category, country):
         self.download_promotions(category)
         self.read_promotions_csv(f='/var/tmp/promotions_'+category+'.csv',mode='rt',encoding='utf_8', category=category, country=country)
-        print('Success')
+        print('Success:',category)
 
 
 class Command(BaseCommand):

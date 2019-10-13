@@ -464,10 +464,22 @@ class AwinLoader():
             file_writer.write(r.text)
 
     def type_determ(self, typ):
-        if "Promotions Only" == typ:
-            return False
-        elif "Vouchers Only" == typ:
+        """
+        Determines if a promotion is a coupon
+
+        Parameters
+        ----------
+        typ : str
+            AWIN promotion type (promotion csv, column 'Type')
+
+        Returns
+        -------
+        True if the AWIN promotion is a Voucher.
+        False otherwise
+        """
+        if "Vouchers Only".lower() == typ.lower():
             return True
+        return False
 
     def code_determ(self, typ, code):
         if "Promotions Only" == typ:
@@ -505,11 +517,42 @@ class AwinLoader():
         return True if "true"==exclusive.lower() else False
 
     def read_promotions_csv(self,f,mode,encoding,category,country):
+        """
+        Read promotions from the csv (downloaded from AWIN); and loads them to the database.
+        
+        The loading only happens, if the advertisers already exists in the Organization model.
+        
+        Vouchers and Promotions are loaded; if we have joined the Advertiser's program.
+        Promotions only are loaded; if we have not joined the Advertiser's program.
+
+        Parameters
+        ----------
+        f : str
+            The path, to the csv (e.g. ~/target.csv)
+
+        mode : str
+            The python file mode (i.e. rt)
+
+        encoding : str
+            A python standard encoding (i.e. utf_8)
+
+        category :
+            The offer category, to save the offers under.
+            The csv should only contain offers, for one particular category (e.g. travel)
+
+        country : 
+            ISO code that targets promotions, which are in particular AWIN Regions
+            (e.g. ISO code GB, would target region United Kingdomw)
+
+        Returns
+        -------
+        This function returns nothing.
+        The purpose of the function is to ultimately load the database, not return a value.
+        """
         with open(file=f,mode=mode,encoding=encoding) as csv_file:
             csv_reader = csv.DictReader(f=csv_file)
             for row in csv_reader:
-                # load GB only because we are not ready for other countries (in terms of legal requirements)
-                if "United Kingdom" in row["Regions"]:
+                if Country.objects.get(iso_country_code=country).country.lower() in row["Regions"].lower():
                     if Organization.objects.filter(external_id=row['Advertiser ID']).exists():
                         if Organization.objects.get(external_id=row['Advertiser ID']).program_joined:
                                 try:
@@ -572,20 +615,20 @@ class Command(BaseCommand):
         parser.add_argument('method', nargs=1, choices=['crawler', 'awin'])
         parser.add_argument('target', nargs=1, choices=['advertisers', 'promotions'])
         parser.add_argument('country', nargs=1, choices=list(Country.target_country_codes))
-        parser.add_argument('category', nargs=1, choices=[
-                            'experiences', 'fashion', 'health', 'food_drink', 'sports', 'technology', 'travel'])
+        parser.add_argument('category', nargs='?', choices=[
+                            'experiences', 'fashion', 'health', 'food_drink', 'sports', 'technology', 'travel'], default=None)
 
     def handle(self, *args, **options):
         # handle the command
         
         if "crawler" == options['method'][0].lower():
             crawler = WebCrawler()
-            crawler.crawl(options['category'][0],Country.objects.get(iso_country_code=options['country'][0]))
+            crawler.crawl(options['category'],Country.objects.get(iso_country_code=options['country'][0]))
         elif "awin" == options['method'][0].lower() and 'advertisers' == options['target'][0].lower():
             awin_loader = AwinLoader()
             awin_loader.load_advertisers(Country.objects.get(iso_country_code=options['country'][0]))
         elif "awin" == options['method'][0].lower() and 'promotions' == options['target'][0].lower():
+            if None == options['category']:
+                raise ValueError('error: please provide a category')
             awin_loader = AwinLoader()
-            awin_loader.load_promotions(options['category'][0], options['country'][0])
-        
-        # We might need to write the MAIN logic in here, and define the helper functions, elsewhere in the class -- makes it easier to use the Query Set API
+            awin_loader.load_promotions(options['category'], options['country'][0])

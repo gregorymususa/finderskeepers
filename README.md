@@ -215,6 +215,7 @@ $ vim base.html
 
 ### Versioning
 We are using the versioning system: MAJOR.MINOR.PATCH
+
 Given a new version, increment the:
 - MAJOR version when you make incompatible API changes
 - MINOR version when you add functionality in a backwards-compatible manner

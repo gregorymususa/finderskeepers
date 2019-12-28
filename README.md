@@ -212,3 +212,13 @@ $ vim base.html
 4. IF the image is square, do nothing ELSE make the image square (imagemagic)
 5. Add the new image name to Organization.logo
 6. Flag rectangles, for manual intervention / make sure to only add square and close to square logos. 
+
+### Versioning
+We are using the versioning system: MAJOR.MINOR.PATCH
+Given a new version, increment the:
+- MAJOR version when you make incompatible API changes
+- MINOR version when you add functionality in a backwards-compatible manner
+- PATCH version when you make backwards-compatible bug fixes.
+Source:
+> https://blog.codeship.com/best-practices-when-versioning-a-release/
+

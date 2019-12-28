@@ -355,9 +355,9 @@
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   <script>
     //Initialization
-    var appname = "couponfinder";
-    var path = "ajax_search/";
-    var ajax_search_url = "/" + appname + "/" + path;
+    var approute = "ted";
+    var path = "ajax_search";
+    var ajax_search_url = "/" + approute + "/" + path + "/";
     
     // Phones
     $( function() {
@@ -396,10 +396,10 @@
     } );
   </script>
   <script>
-    var appname = "couponfinder";
-    var path = "ajax_category/";
+    var approute = "ted";
+    var path = "ajax_category";
     var couponfinder_slug = $('.couponfinder-paginator').data("couponfinder-slug");
-    var ajax_category_url = "/" + appname + "/" + path + couponfinder_slug + "/";
+    var ajax_category_url = "/" + approute + "/" + path + "/" + couponfinder_slug + "/";
 
     var couponfinder_currentpage = $('.couponfinder-paginator').data("couponfinder-currentpage");
     var couponfinder_nextpage = $('.couponfinder-paginator').data("couponfinder-nextpage");
@@ -429,9 +429,9 @@
     });
   </script>
   <script>
-    var appname = "couponfinder";
-    var path = "ajax_tsandcs/";
-    var ajax_terms_url = "/" + appname + "/" + path;
+    var approute = "ted";
+    var path = "ajax_tsandcs";
+    var ajax_terms_url = "/" + approute + "/" + path + "/";
 
     function format(terms){
       //Did a string.split(//) using regex i.e.  /[regex here]/

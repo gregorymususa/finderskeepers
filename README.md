@@ -220,6 +220,7 @@ Given a new version, increment the:
 - MAJOR version when you make incompatible API changes
 - MINOR version when you add functionality in a backwards-compatible manner
 - PATCH version when you make backwards-compatible bug fixes.
+
 Source:
 > https://blog.codeship.com/best-practices-when-versioning-a-release/
 

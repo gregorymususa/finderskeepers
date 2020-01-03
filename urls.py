@@ -3,7 +3,7 @@ from . import views
 
 # TODO app_name (https://docs.djangoproject.com/en/2.1/intro/tutorial03/)
 urlpatterns = [
-    path('', views.index, name='index'),
+    path('', views.index, name='home'),
     path('business/<slug:business_name_slug>/', views.business, name="business"),
     path('category/<slug:category_name_slug>/', views.category, name="category"),
     path('privacy/', views.privacy, name="privacy"),

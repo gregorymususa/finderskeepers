@@ -357,7 +357,8 @@
     //Initialization
     var approute = "ted";
     var path = "ajax_search";
-    var ajax_search_url = "/" + approute + "/" + path + "/";
+    //var ajax_search_url = "/" + approute + "/" + path + "/";
+    var ajax_search_url = "/" + path + "/";
     
     // Phones
     $( function() {
@@ -399,7 +400,8 @@
     var approute = "ted";
     var path = "ajax_category";
     var couponfinder_slug = $('.couponfinder-paginator').data("couponfinder-slug");
-    var ajax_category_url = "/" + approute + "/" + path + "/" + couponfinder_slug + "/";
+    //var ajax_category_url = "/" + approute + "/" + path + "/" + couponfinder_slug + "/";
+    var ajax_category_url = "/" + path + "/" + couponfinder_slug + "/";
 
     var couponfinder_currentpage = $('.couponfinder-paginator').data("couponfinder-currentpage");
     var couponfinder_nextpage = $('.couponfinder-paginator').data("couponfinder-nextpage");
@@ -431,7 +433,8 @@
   <script>
     var approute = "ted";
     var path = "ajax_tsandcs";
-    var ajax_terms_url = "/" + approute + "/" + path + "/";
+    //var ajax_terms_url = "/" + approute + "/" + path + "/";
+    var ajax_terms_url = "/" + path + "/";
 
     function format(terms){
       //Did a string.split(//) using regex i.e.  /[regex here]/

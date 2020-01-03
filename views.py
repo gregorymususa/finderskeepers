@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from django.template import Template, context, loader
 from django.db.models import Q
 from django.core.paginator import Paginator
+from django.urls import reverse
 from .models import Category, Organization, Offer, Country
 
 import json, os, requests
@@ -335,8 +336,7 @@ def search(request):
                                                 exclude=False)
     if len(organizations) == 1:
         slug = organizations[0].slug
-        target_url = "/couponfinder/business/" + slug + "/"
-        return HttpResponseRedirect(target_url)
+        return HttpResponseRedirect(reverse('business',args=[slug]))
     elif len(organizations) <= 0:
         for keyword in search_term_keywords:
             orgs = Organization.objects.filter(name__icontains=keyword,

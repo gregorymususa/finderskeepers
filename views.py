@@ -241,13 +241,15 @@ def category(request, category_name_slug):
                                                 category=Category.objects.filter(slug=category_name_slug)[0],
                                                 country=Country.objects.get(iso_country_code=visitor_country_code),
                                                 organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
-                                                expiry_date__gt=now),15).page(page)
+                                                expiry_date__gt=now,
+                                                exclude=False),15).page(page)
     else:
         offers = Paginator(Offer.objects.filter(~Q(organization__in=excluded_orgs),
                                                 category=Category.objects.filter(slug=category_name_slug)[0],
                                                 country=Country.objects.get(iso_country_code=visitor_country_code),
                                                 organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
-                                                expiry_date__gt=now),15).page(1)
+                                                expiry_date__gt=now,
+                                                exclude=False),15).page(1)
 
     category = Category.objects.filter(slug=category_name_slug)[0]
 
@@ -273,7 +275,8 @@ def ajax_category(request, category_name_slug):
                                                 category=Category.objects.filter(slug=category_name_slug)[0],
                                                 country=Country.objects.get(iso_country_code=visitor_country_code),
                                                 organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
-                                                expiry_date__gt=now),15).page(page)
+                                                expiry_date__gt=now,
+                                                exclude=False),15).page(page)
 
     context = {'offers': offers}
 
@@ -305,7 +308,8 @@ def business(request, business_name_slug):
 
     offers = Offer.objects.filter(organization=organization,
                                   country=Country.objects.get(iso_country_code=visitor_country_code),
-                                  expiry_date__gt=now)
+                                  expiry_date__gt=now,
+                                  exclude=False)
     
     context = {'categories': categories, 'footer_categories': footer_categories, 'addt_footer_categories': addt_footer_categories, 'alert': country_alert,
                'business_name_slug': business_name_slug, 'organization': organization, 'offers': offers, 'current_visitor_country_code': visitor_country_code,
@@ -348,7 +352,7 @@ def search(request):
     organizations_copy = organizations.all()
     
     for o in organizations_copy:
-        if 0 == len(Offer.objects.filter(organization=o, expiry_date__gt=datetime.utcnow())):
+        if 0 == len(Offer.objects.filter(organization=o, expiry_date__gt=datetime.utcnow(), exclude=False)):
             organizations = organizations.filter(~Q(name=o.name))
 
     context = {'categories': categories, 'footer_categories': footer_categories, 'addt_footer_categories': addt_footer_categories, 'alert': country_alert,
@@ -379,7 +383,7 @@ def ajax_search(request):
     orgs_with_no_offers = []
 
     for o in organizations:
-        if 0 == len(Offer.objects.filter(organization=o, expiry_date__gt=datetime.utcnow())):
+        if 0 == len(Offer.objects.filter(organization=o, expiry_date__gt=datetime.utcnow(), exclude=False)):
             orgs_with_no_offers.append(o)
 
     result = diff(list(organizations),orgs_with_no_offers)

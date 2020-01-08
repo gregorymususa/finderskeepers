@@ -235,21 +235,13 @@ def category(request, category_name_slug):
 
     now = datetime.utcnow()
 
-    page = request.GET.get("page",False)
-    if page != False:
-        offers = Paginator(Offer.objects.filter(~Q(organization__in=excluded_orgs),
-                                                category=Category.objects.filter(slug=category_name_slug)[0],
-                                                country=Country.objects.get(iso_country_code=visitor_country_code),
-                                                organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
-                                                expiry_date__gt=now,
-                                                exclude=False),15).page(page)
-    else:
-        offers = Paginator(Offer.objects.filter(~Q(organization__in=excluded_orgs),
-                                                category=Category.objects.filter(slug=category_name_slug)[0],
-                                                country=Country.objects.get(iso_country_code=visitor_country_code),
-                                                organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
-                                                expiry_date__gt=now,
-                                                exclude=False),15).page(1)
+    page = request.GET.get("page",1)
+    offers = Paginator(Offer.objects.filter(~Q(organization__in=excluded_orgs),
+                                            category=Category.objects.filter(slug=category_name_slug)[0],
+                                            country=Country.objects.get(iso_country_code=visitor_country_code),
+                                            organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
+                                            expiry_date__gt=now,
+                                            exclude=False),15).page(page)
 
     category = Category.objects.filter(slug=category_name_slug)[0]
 
@@ -263,20 +255,20 @@ def category(request, category_name_slug):
 
 
 def ajax_category(request, category_name_slug):
-    page = request.GET.get("page",False)
     media = request.GET.get("media", False)
  
     now = datetime.utcnow()
 
     visitor_country_code = get_location(request)['visitor_country_code']
     excluded_orgs = Organization.objects.filter(exclude=True, country=Country.objects.get(iso_country_code=visitor_country_code))
-    if page != False:
-        offers = Paginator(Offer.objects.filter(~Q(organization__in=excluded_orgs),
-                                                category=Category.objects.filter(slug=category_name_slug)[0],
-                                                country=Country.objects.get(iso_country_code=visitor_country_code),
-                                                organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
-                                                expiry_date__gt=now,
-                                                exclude=False),15).page(page)
+    
+    page = request.GET.get("page",1)
+    offers = Paginator(Offer.objects.filter(~Q(organization__in=excluded_orgs),
+                                            category=Category.objects.filter(slug=category_name_slug)[0],
+                                            country=Country.objects.get(iso_country_code=visitor_country_code),
+                                            organization__in=Organization.objects.filter(country=Country.objects.get(iso_country_code=visitor_country_code)),
+                                            expiry_date__gt=now,
+                                            exclude=False),15).page(page)
 
     context = {'offers': offers}
 

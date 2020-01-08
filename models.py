@@ -66,6 +66,10 @@ class Organization(models.Model):
     def __str__(self):
         return self.name
 
+    def __lt__(self,other):
+        assert isinstance(other,Organization)
+        return self.name.lower()<other.name.lower()
+
     
 # TODO documentation strings; including the order of parameters
 class Offer(models.Model):

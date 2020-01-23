@@ -224,3 +224,8 @@ Given a new version, increment the:
 Source:
 > https://blog.codeship.com/best-practices-when-versioning-a-release/
 
+## Force migrations 
+### Without MakeMigrations
+manage.py migrate --syncdb
+### Fake first migrate
+manage.py migrate --fake myappname zero

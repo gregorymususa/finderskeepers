@@ -60,6 +60,7 @@ class Organization(models.Model):
     exclude = models.BooleanField('Exclude', default=False)
     external_id = models.CharField('ExternalID', max_length=70, unique=True, blank=True, null=True)
     source = models.CharField('Source', max_length=11, choices=sources, blank=True, null=True)
+    last_reviewed = models.DateField("LastReviewed", blank=True, null=True)
 
     country = models.ForeignKey('Country', on_delete=models.CASCADE)
  

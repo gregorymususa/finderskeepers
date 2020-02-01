@@ -39,7 +39,7 @@
         {% for organization in organizations %}
           <li class="list-group-item border-0 my-1 couponfinder-search-result-item">
             {% if '' != organization.logo %}
-              <img src="{% static organization.logo %}" style="width:2rem" />
+              <img src="{% static organization.logo %}" />
             {% endif %}
             <a href="{% url 'business' organization.slug %}" class="text-dark font-weight-bold">{{organization.name}}</a>
           </li>
@@ -63,7 +63,7 @@
         {% for organization in organizations %}
           <li class="list-group-item border-0 my-1 couponfinder-search-result-item">
             {% if '' != organization.logo %}
-              <img src="{% static organization.logo %}" style="width:2rem" />
+              <img src="{% static organization.logo %}" />
             {% endif %}
             <a href="{% url 'business' organization.slug %}" class="text-dark font-weight-bold">{{organization.name}}</a>
           </li>

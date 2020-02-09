@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.db import IntegrityError
 from couponfinder.models import Category, Organization, Offer, Country
-from couponfinderqa.models import StaffPreferences, ImportedOffers
+from couponfinderqa.models import StaffPreferences, ImportedOffer
 
 import requests
 import sys, os
@@ -237,7 +237,7 @@ class WebCrawler():
     def crawl(self, category, country):
         """
         Starts the script, with the following mandatory parameter:
-        category  - "Fashion", "Travel", "Experiences", "Food & Drink", "Technology", "Health", "Sports"
+        category - 'experiences', 'fashion', 'health', 'food_drink', 'sports', 'technology', 'travel'
         """
         r= self.requests_get_category(category)
         if False == r:
@@ -249,7 +249,7 @@ class WebCrawler():
         ul = uls[0]
         lis = ul.select('li.js-offer-container.c-offer')
 
-        c = Category.objects.get(name=category)
+        c = Category.objects.get(slug=category)
         for li in lis:
             if self.is_offer_exclusive(li):
                 continue
@@ -300,7 +300,17 @@ class WebCrawler():
             try:
                 #Offer(description=offer_title,affiliate_link=offer_affiliate_link,code=offer_code,expiry_date=offer_expiry_date,is_while_stocks_last=offer_is_while_stocks_last,label=offer_label,terms=offer_terms,external_id=offer_external_id,country=country,category=c,organization=o).save()
                 if offer_label == 'Offer Code':
-                    print(org_name,offer_title,offer_affiliate_link,offer_code,offer_expiry_date,offer_is_while_stocks_last,offer_label,offer_terms,offer_external_id,country.iso_country_code, sep=",")
+                    ImportedOffer(
+                        cat_name = c.name,
+                        org_name = org_name,
+                        offer_title = offer_title,
+                        offer_code = offer_code,
+                        offer_expiry_date = offer_expiry_date,
+                        offer_is_while_stocks_last = offer_is_while_stocks_last,
+                        offer_terms = offer_terms,
+                        iso_country_code = country.iso_country_code
+                    ).save()
+                    print(c.name,org_name,offer_title,offer_affiliate_link,offer_code,offer_expiry_date,offer_is_while_stocks_last,offer_label,offer_terms,offer_external_id,country.iso_country_code, sep=",")
             except IntegrityError:#skip processing, if already exists
                 continue
 

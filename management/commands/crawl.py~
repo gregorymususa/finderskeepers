@@ -147,7 +147,7 @@ class WebCrawler():
     def getOrgName(self, li):
         ps = li.select('p.c-offer__merchant-link')
         for p in ps:
-            return p.get_text().replace("See all ", "").replace(" Voucher Codes", "").strip()
+            return p.get_text().replace("See all ", "").replace(" Voucher Codes", "").replace(" Discount &", "").strip()
         return False
 
     def getOfferTitle(self, li, orgName):

@@ -78,6 +78,7 @@ class Offer(models.Model):
     SALE = "SALE"
     AWIN = "AWIN"
     CJ = "CJ"
+    C_MVC = "C_MVC" 
     labels = (
         (CODE,"Offer Code"),
         (SALE,"Sale"),
@@ -85,6 +86,7 @@ class Offer(models.Model):
     sources = (
         (AWIN,"AWIN"),
         (CJ,"CJ"),
+        (C_MVC,"C_MVC"),
     )
     title = models.TextField('Title', blank=True, null=True)
     description = models.TextField('Description')

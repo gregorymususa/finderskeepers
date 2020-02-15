@@ -307,6 +307,7 @@ class WebCrawler():
                         offer_code = offer_code,
                         offer_expiry_date = offer_expiry_date,
                         offer_is_while_stocks_last = offer_is_while_stocks_last,
+                        offer_label = offer_label,
                         offer_terms = offer_terms,
                         offer_source = ImportedOffer.C_MVC,
                         iso_country_code = country.iso_country_code

@@ -74,7 +74,7 @@ class WebCrawler():
             return False
 
     def requests_get_coupon_code(self, extID, cat_name):
-        #builtin_time.sleep(randint(45, 60))
+        builtin_time.sleep(randint(45, 60))
         headers = self.get_headers()
         if "Fashion".lower() == cat_name.lower():
             r = requests.get("https://www.myvouchercodes.co.uk/system/reveal/" + extID +

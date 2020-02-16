@@ -74,7 +74,7 @@ class WebCrawler():
             return False
 
     def requests_get_coupon_code(self, extID, cat_name):
-        #builtin_time.sleep(randint(45, 60))
+        builtin_time.sleep(randint(45, 60))
         headers = self.get_headers()
         if "Fashion".lower() == cat_name.lower():
             r = requests.get("https://www.myvouchercodes.co.uk/system/reveal/" + extID +
@@ -132,12 +132,12 @@ class WebCrawler():
                 'https://www.myvouchercodes.co.uk/sports-fitness-outdoors', headers=headers)
         else:
             return False
-
+        
         try:
             r.raise_for_status()
         except:
             return False
-
+        
         return r
 
     ###########
@@ -236,8 +236,8 @@ class WebCrawler():
 
     def crawl(self, category, country):
         """
-        Starts the script, with the following mandatory parameter:
-        category - 'experiences', 'fashion', 'health', 'food_drink', 'sports', 'technology', 'travel'
+        Starts the script, with the following mandatory parameter (representing Category.name):
+        category - 'experiences', 'fashion', 'health', 'food & drink', 'sports', 'technology', 'travel'
         """
         r= self.requests_get_category(category)
         if False == r:
@@ -249,21 +249,12 @@ class WebCrawler():
         ul = uls[0]
         lis = ul.select('li.js-offer-container.c-offer')
 
-        c = Category.objects.get(slug=category)
+        c = Category.objects.get(name=category)
         for li in lis:
             if self.is_offer_exclusive(li):
                 continue
-
+            
             offer_external_id = self.getExternalOfferID(li)
-            if self.offer_exists(category,offer_external_id):
-                if self.offer_code_is_none(category,offer_external_id):
-                    offer_code = self.getOfferCode(offer_external_id,category)
-                    #offer_to_replace = Offer.objects.get(category=Category.objects.get(name=category),external_id=offer_external_id)
-                    #offer_to_replace.code = offer_code
-                    #offer_to_replace.save()
-                    print('Replace Offer Code, for offer',offer_external_id,'offer code is:',offer_code)
-                continue#skip processing, if already exists
-
             org_name = self.getOrgName(li)
             org_website = "http://example.com"#TODO
             org_slug = self.getSlug(org_name)
@@ -279,42 +270,36 @@ class WebCrawler():
             else:
                 offer_code = None
 
-            #o_tuple = Organization.objects.get_or_create(name=org_name,country=country)
-            #if True == o_tuple[1]:#IF created for the first time THEN setup the Org.
-                #o = o_tuple[0]
-                #o.website = org_website
-                #o.slug = org_slug
-                #o.save()
-                #o.category.add(c)
-            #else:#ELSE IF already existed THEN update the Org.
-                #o = o_tuple[0]
-                #if "http://example.com".lower() == o.website.lower():
-                    #o.website = org_website
-                #
-                #if None == o.slug:
-                    #o.slug = org_slug
-                #
-                #if [] == o.category.filter(name=category):
-                    #o.category.add(c)
-
-            try:
-                #Offer(description=offer_title,affiliate_link=offer_affiliate_link,code=offer_code,expiry_date=offer_expiry_date,is_while_stocks_last=offer_is_while_stocks_last,label=offer_label,terms=offer_terms,external_id=offer_external_id,country=country,category=c,organization=o).save()
-                if offer_label == 'Offer Code':
-                    ImportedOffer(
-                        cat_name = c.name,
-                        org_name = org_name,
-                        offer_title = offer_title,
-                        offer_code = offer_code,
-                        offer_expiry_date = offer_expiry_date,
-                        offer_is_while_stocks_last = offer_is_while_stocks_last,
-                        offer_label = offer_label,
-                        offer_terms = offer_terms,
-                        offer_source = ImportedOffer.C_MVC,
-                        iso_country_code = country.iso_country_code
-                    ).save()
-                    print(c.name,org_name,offer_title,offer_affiliate_link,offer_code,offer_expiry_date,offer_is_while_stocks_last,offer_label,offer_terms,offer_external_id,country.iso_country_code, sep=",")
-            except IntegrityError:#skip processing, if already exists
-                continue
+            if offer_label == 'Offer Code':
+                ImportedOffer.objects.update_or_create(
+                    cat_name = c.name,
+                    org_name = org_name,
+                    iso_country_code = country.iso_country_code,
+                    offer_code = offer_code,
+                    defaults = {
+                        'offer_title' : offer_title,
+                        'offer_expiry_date' : offer_expiry_date,
+                        'offer_is_while_stocks_last' : offer_is_while_stocks_last,
+                        'offer_label' : offer_label,
+                        'offer_terms' : offer_terms,
+                        'offer_source' : ImportedOffer.C_MVC
+                    }
+                )
+                
+                print(
+                    c.name,
+                    org_name,
+                    offer_title,
+                    offer_affiliate_link,
+                    offer_code,
+                    offer_expiry_date,
+                    offer_is_while_stocks_last,
+                    offer_label,
+                    offer_terms,
+                    offer_external_id,
+                    country.iso_country_code,
+                    sep=","
+                )
 
         return True
 
@@ -325,7 +310,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('country', nargs=1, choices=list(Country.target_country_codes))
         parser.add_argument('category', nargs='?', choices=[
-                            'experiences', 'fashion', 'health', 'food_drink', 'sports', 'technology', 'travel'], default=None)
+                            'experiences', 'fashion', 'health', 'food & drink', 'sports', 'technology', 'travel'], default=None)
 
     def handle(self, *args, **options):
         # handle the command

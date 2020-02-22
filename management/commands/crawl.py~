@@ -57,24 +57,10 @@ class WebCrawler():
         if 0 < len(Offer.objects.filter(category=Category.objects.get(name=cat_name), external_id=extid)):
             return True
         return False
-
-    def offer_code_is_none(self, cat_name, extid):
-        """
-          Returns True, if offer code is none. Otherwise, returns False.
-
-          The aim of this function, is to correct Offer Codes, that get saved as None (e.g. due to a change in the structure of the data source).
-          Fixing the way the data is obtained here, allows for overwriting of those cases.
-          
-          cat_name Category Name
-          extid External Offer  ID
-        """
-        if (Offer.labels[0][1] == Offer.objects.get(category=Category.objects.get(name=cat_name),external_id=extid).label) and (None == Offer.objects.get(category=Category.objects.get(name=cat_name),external_id=extid).code):
-            return True
-        else:
-            return False
-
+    
+    
     def requests_get_coupon_code(self, extID, cat_name):
-        builtin_time.sleep(randint(45, 60))
+        #builtin_time.sleep(randint(45, 60))
         headers = self.get_headers()
         if "Fashion".lower() == cat_name.lower():
             r = requests.get("https://www.myvouchercodes.co.uk/system/reveal/" + extID +
@@ -207,17 +193,17 @@ class WebCrawler():
             return "Deal"
         else:
             return None
-
+    
     def getExternalOfferID(self, li):
         return li.get_attribute_list('data-offer-id')[0]
-
+    
     def getTsandCs(self, li):
         ps = li.select('div.c-offer__terms-box-content p')
         if 0 < len(ps):
             return ps[0].get_text().strip().replace("\t", "")
         else:
             return ""
-
+    
     def getSlug(self, aString):
         return aString.replace("& ", "").replace("&", "").replace("'", "").replace(".", "_").replace(" ", "_").lower()
 
@@ -230,11 +216,11 @@ class WebCrawler():
         if 0 < len(offer_code_inputs):
             return offer_code_inputs[0].get_attribute_list('value')[0].strip()
         else:
-            print("Could not find Offer Code, for External ID %s (%s)" %
-                  (extid, cat_name))
+            #print("Could not find Offer Code, for External ID %s (%s)" %
+            #      (extid, cat_name))
             return None
 
-    def crawl(self, category, country):
+    def crawl(self, category, country, silent_mode):
         """
         Starts the script, with the following mandatory parameter (representing Category.name):
         category - 'experiences', 'fashion', 'health', 'food & drink', 'sports', 'technology', 'travel'
@@ -256,14 +242,12 @@ class WebCrawler():
             
             offer_external_id = self.getExternalOfferID(li)
             org_name = self.getOrgName(li)
-            org_website = "http://example.com"#TODO
             org_slug = self.getSlug(org_name)
             offer_title = self.getOfferTitle(li,org_name)
             offer_expiry_date = self.getOfferExpiryDate(li)
             offer_is_while_stocks_last = self.isWhileStocksLast(li)
             offer_label = self.getOfferLabel(li)
             offer_terms = self.getTsandCs(li)
-            offer_affiliate_link = "http://example.com"#TODO
 
             if "Offer Code" == offer_label:
                 offer_code = self.getOfferCode(offer_external_id,category)
@@ -286,21 +270,21 @@ class WebCrawler():
                     }
                 )
                 
-                print(
-                    c.name,
-                    org_name,
-                    offer_title,
-                    offer_affiliate_link,
-                    offer_code,
-                    offer_expiry_date,
-                    offer_is_while_stocks_last,
-                    offer_label,
-                    offer_terms,
-                    offer_external_id,
-                    country.iso_country_code,
-                    sep=","
-                )
-
+                if not silent_mode:
+                    print(
+                        c.name,
+                        org_name,
+                        offer_title,
+                        offer_code,
+                        offer_expiry_date,
+                        offer_is_while_stocks_last,
+                        offer_label,
+                        offer_terms,
+                        offer_external_id,
+                        country.iso_country_code,
+                        sep=","
+                    )
+        
         return True
 
 
@@ -311,9 +295,10 @@ class Command(BaseCommand):
         parser.add_argument('country', nargs=1, choices=list(Country.target_country_codes))
         parser.add_argument('category', nargs='?', choices=[
                             'experiences', 'fashion', 'health', 'food & drink', 'sports', 'technology', 'travel'], default=None)
+        parser.add_argument('-s', action='store_true')
 
     def handle(self, *args, **options):
         # handle the command
         
         crawler = WebCrawler()
-        crawler.crawl(options['category'],Country.objects.get(iso_country_code=options['country'][0]))
+        crawler.crawl(options['category'],Country.objects.get(iso_country_code=options['country'][0]),options['s'])

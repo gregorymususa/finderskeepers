@@ -229,3 +229,60 @@ Source:
 manage.py migrate --syncdb
 ### Fake first migrate
 manage.py migrate --fake myappname zero
+
+## SSL Activation
+
+### Create Certificate Request
+Request a CSR file
+```
+$ openssl req -new -newkey rsa:2048 -nodes -keyout discount-ted.com.key -out discount-ted.com.csr
+```
+
+```
+Country Name (2 letter code) [AU]:NL
+State or Province Name (full name) [Some-State]:Zuid Holland
+Locality Name (eg, city) []:Rotterdam
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:Discount-Ted
+Organizational Unit Name (eg, section) []:Developers
+Common Name (e.g. server FQDN or YOUR name) []:discount-ted.com
+Email Address []:admin@discount-ted.com
+
+Please enter the following 'extra' attributes
+to be sent with your certificate request
+A challenge password []:*******************
+An optional company name []:Discount-Ted
+```
+
+The following files will be created:
+```
+$ ls -l
+discount-ted.com.csr
+discount-ted.com.key
+```
+
+### Check certificate
+# SSL Checker: https://decoder.link/
+
+### Request and Obtain Certificate
+Enter CSR (including Header and Footer) on Namecheap's website (SSL Activation)
+Namecheap will send data to Certificate Authority
+Certificate Authority will email your
+Follow the email instructions
+Certificate Authority will send you the certificate; SFTP them onto the server
+* discount-ted_com.ca-bundle
+* discount-ted_com.crt
+
+### Install Certificate
+Install Certificate; or
+Replace the files that the directives point to
+
+$ sudo vim /etc/apache2/sites-enabled/000-default.conf
+
+```
+# SSL Certificate Installation
+ServerName discount-ted.com
+SSLEngine on
+SSLCertificateKeyFile .../discount-ted.com.key
+SSLCertificateFile .../discount-ted_com.crt
+SSLCACertificateFile .../discount-ted_com.ca-bundle
+```

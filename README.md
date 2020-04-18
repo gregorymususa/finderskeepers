@@ -276,7 +276,9 @@ Certificate Authority will send you the certificate; SFTP them onto the server
 Install Certificate; or
 Replace the files that the directives point to
 
+```
 $ sudo vim /etc/apache2/sites-enabled/000-default.conf
+```
 
 ```
 # SSL Certificate Installation

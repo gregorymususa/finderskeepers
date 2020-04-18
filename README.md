@@ -242,7 +242,7 @@ $ openssl req -new -newkey rsa:2048 -nodes -keyout discount-ted.com.key -out dis
 Country Name (2 letter code) [AU]:NL
 State or Province Name (full name) [Some-State]:Zuid Holland
 Locality Name (eg, city) []:Rotterdam
-Organization Name (eg, company) [Internet Widgits Pty Ltd]:Discount-Ted
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:Discount Ted
 Organizational Unit Name (eg, section) []:Developers
 Common Name (e.g. server FQDN or YOUR name) []:discount-ted.com
 Email Address []:admin@discount-ted.com
@@ -250,7 +250,7 @@ Email Address []:admin@discount-ted.com
 Please enter the following 'extra' attributes
 to be sent with your certificate request
 A challenge password []:*******************
-An optional company name []:Discount-Ted
+An optional company name []:
 ```
 
 The following files will be created:
@@ -261,7 +261,7 @@ discount-ted.com.key
 ```
 
 ### Check certificate
-# SSL Checker: https://decoder.link/
+SSL Checker: https://decoder.link/
 
 ### Request and Obtain Certificate
 Enter CSR (including Header and Footer) on Namecheap's website (SSL Activation)

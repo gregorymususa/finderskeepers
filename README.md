@@ -23,20 +23,20 @@ from django.urls import include
 path('couponfinder/', include('couponfinder.urls')),
 
 
-## Fresh Droplet Environment Setup
-### Setup Virtual-Env and Django Project
+## 1. Fresh Droplet Environment Setup
+### 1.1. Setup Virtual-Env and Django Project
 $ virtualenv --python=python3 couponfinder-env
 
 $ cd couponfinder-env
 
 $ django-admin startproject couponfinderproject
 
-### Install Django Apps
+### 1.2. Install Django Apps
 $ vim settings.py
 
 INSTALLED_APPS = ['couponfinder.apps.CouponfinderConfig',.....]
 
-### Install MYSQL Client (and configure it in settings.py)
+### 1.3. Install MYSQL Client (and configure it in settings.py)
 $ source bin/activate #activate virtual-env
 
 $ sudo apt-get install python-dev python3-dev
@@ -47,7 +47,7 @@ $ pip install mysqlclient
 
 $ pip install pytz
 
-### Install PEP8
+### 1.4. Install PEP8
 $ pip install autopep8
 
 gq    - to format line
@@ -56,10 +56,10 @@ gqap  - to format consecutive lines of code (i.e. no blank lines in-between)
 
 gggqG - to format whole document
 
-### Install PEP8 globally
+### 1.5. Install PEP8 globally
 $ sudo apt-get install python-autopep8
 
-### Install External Libraries
+### 1.6. Install External Libraries
 #### Requests
 $ pip install requests
 
@@ -73,12 +73,12 @@ $ sudo apt-get install ruby-full rubygems
 
 $ sudo gem install sass
 
-### Install Web Server Apache, and Apache Module mod_wsgi
+### 1.7. Install Web Server Apache, and Apache Module mod_wsgi
 $ sudo apt-get install apache2
 
 $ sudo apt-get install libapache2-mod-wsgi-py3
 
-### Configure Apacahe
+### 1.8. Configure Apacahe
 $ cd /etc/apache2/sites-available
 
 $ sudo vim 000-default.conf
@@ -111,7 +111,7 @@ Syntax OK
 
 $ sudo systemctl restart apache2
 
-### Setup Static Files
+### 1.9. Setup Static Files
 $ mkdir /var/www/couponfinder/static
 
 $ vim /couponfinder-env/couponfinderproject/couponfinderproject/settings.py
@@ -130,12 +130,12 @@ $ sudo chmod 777 -R couponfinder/ #change the mode of this folder, to give it wr
 
 $ ./manage.py collectstatic
 
-### Project urls.py (nb. not the app urls.py)
+### 1.10. Project urls.py (nb. not the app urls.py)
 from couponfinder import views
 
 urlpatterns = [path('',views.index, name='home')]
 
-### Update Apache Config
+### 1.11. Update Apache Config
 $ sudo /etc/apache2/sites-available/vim 000-default.conf
 
 ```
@@ -149,7 +149,7 @@ $ sudo apache2ctl configtest
 
 $ sudo systemctl restart apache2
 
-### Envrionment Variables
+### 1.12. Envrionment Variables
 
 1. Tried to place Environment Variables in $ sudo vim /etc/environment (so it is available globally, from boot)
 
@@ -173,14 +173,14 @@ os.environ['ENVIRONMENT_VARIABLE'] = 'VALUE'
 
 Source: https://gist.github.com/GrahamDumpleton/b380652b768e81a7f60c
 
-## Company Logo processing
+## 2. Company Logo processing
 sudo apt-get update
 
 sudo apt-get install imagemagick -y
 
 wget --no-verbose --no-parent --recursive --level=1 --no-directories http://yetanothersandbox.com/logos/
 
-#### Custom Commands
+#### 2.1. Custom Commands
 ../../../../manage.py resize_logos *
 
 ./manage.py collectstatic
@@ -189,7 +189,7 @@ sudo systemctl restart apache2
 
 ./manage.py load_logos slug slug slug 
 
-#### Adding a favicon.ico
+#### 2.2. Adding a favicon.ico
 ```
 $ cd ~..../couponfinder/static/couponfinder
 
@@ -205,7 +205,7 @@ $ vim base.html
 <link rel="shortcut icon" href="{% static "couponfinder/favicon.ico" %}" type="image/x-icon">
 ```
 
-### Thoughts on Algorithm
+### 2.3. Thoughts on Algorithm
 1. Create a command, that does the following:
 2. Looks at all Organization.logo - IF an Organization has a blank (or what exists is not returing HTTP 200):
 3. Go to static/couponfinder/logo/; and find an image containing the filename Organization.slug
@@ -213,7 +213,7 @@ $ vim base.html
 5. Add the new image name to Organization.logo
 6. Flag rectangles, for manual intervention / make sure to only add square and close to square logos. 
 
-### Versioning
+### 2.4. Versioning
 We are using the versioning system: MAJOR.MINOR.PATCH
 
 Given a new version, increment the:
@@ -224,15 +224,15 @@ Given a new version, increment the:
 Source:
 > https://blog.codeship.com/best-practices-when-versioning-a-release/
 
-## Force migrations 
-### Without MakeMigrations
+## 3. Force migrations 
+### 3.1. Without MakeMigrations
 manage.py migrate --syncdb
-### Fake first migrate
+### 3.2. Fake first migrate
 manage.py migrate --fake myappname zero
 
-## SSL Activation
+## 4. SSL Activation
 
-### Create Certificate Request
+### 4.1. Create Certificate Request
 Request a CSR file
 ```
 $ openssl req -new -newkey rsa:2048 -nodes -keyout discount-ted.com.key -out discount-ted.com.csr
@@ -260,10 +260,10 @@ discount-ted.com.csr
 discount-ted.com.key
 ```
 
-### Check certificate
+### 4.2. Check certificate
 SSL Checker: https://decoder.link/
 
-### Request and Obtain Certificate
+### 4.3. Request and Obtain Certificate
 Enter CSR (including Header and Footer) on Namecheap's website (SSL Activation)
 Namecheap will send data to Certificate Authority
 Certificate Authority will email your
@@ -272,7 +272,7 @@ Certificate Authority will send you the certificate; SFTP them onto the server
 * discount-ted_com.ca-bundle
 * discount-ted_com.crt
 
-### Install Certificate
+### 4.4. Install Certificate
 Install Certificate; or
 Replace the files that the directives point to
 

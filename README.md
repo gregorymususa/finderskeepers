@@ -77,6 +77,7 @@ $ sudo gem install sass
 $ sudo apt-get install apache2
 
 $ sudo apt-cache search wsgi #search for module name
+
 $ sudo apt-get install libapache2-mod-wsgi-py3
 
 ### 1.8. Configure Apacahe

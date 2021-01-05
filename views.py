@@ -140,19 +140,18 @@ def diff(list1, list2):
     return [list3 for list3 in list1 if list3 not in list2]
 
 
+def load_file(file_location):
+    try:
+        with open(file_location, "rb") as f:
+            return HttpResponse(f.read(), content_type="image")
+    except IOError:
+        return HttpResponse('No Image Found!')
+
+
 #############################################################################################
-# Output Functions                                                                          #
 #                                                                                           #
-# All "Template Rendering" Views, need to have the following functions called at the start: #
-#    categories = get_all_categories()                                                      #
-#    footer_categories = get_footer_categories()                                            #
-#    addt_footer_categories = get_addt_footer_categories()                                  #
-#    location = get_location(request)                                                       #
-#    visitor_country_code = location['visitor_country_code']                                #
-#    country = location['country']                                                          #
-#    countries = Country.objects.filter(iso_country_code__in = Country.target_country_codes)#
+# Render Functions                                                                          #
 #                                                                                           #
-# Because base.html uses the data from these results                                        #
 #############################################################################################
 
 def index(request):
@@ -438,14 +437,5 @@ def legal(request):
     r = HttpResponse(template.render(context, request))
     save_signed_cookie(request, r, 'preferences', os.environ['COUPONFINDER_COOKIE_KEY_LOCATION'], visitor_country_code)
     return r
-
-
-#Utility Functions#
-def load_file(file_location):
-    try:
-        with open(file_location, "rb") as f:
-            return HttpResponse(f.read(), content_type="image")
-    except IOError:
-        return HttpResponse('No Image Found!')
 
 
